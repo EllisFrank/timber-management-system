@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Timber Management Matrix Suite</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .custom-shadow { box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); }
+        .gate-shadow { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        
+        /* Unified Responsive Grid-Table Alignment System */
+        .grid-align-table { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr 1fr 0.4fr; 
+            gap: 8px; 
+            align-items: center; 
+        }
+        
+        /* Fallback for ultra-narrow screens */
+        @media (max-width: 520px) {
+            .grid-align-table {
+                grid-template-columns: 1.2fr 0.8fr 1fr 1fr;
+            }
+            .grid-hide-col { display: none !important; }
+        }
+        
+        /* Rule 1: Print Layout Sanitization Rules */
+        @media print {
+            .no-print, #pinned-global-banner, .global-kpi-card, #mobile-action-bar, #system-sidebar { display: none !important; }
+            main { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+            .print-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            #report-output-header-title { font-size: 18px !important; color: #000 !important; text-align: center; margin-bottom: 20px; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <section id="company-gateway-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 overflow-y-auto">
+        <div class="w-full max-w-md space-y-8 py-6">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl mb-2">
+                    <i class="fa-solid fa-tree-city"></i>
+                </div>
+                <h1 class="text-xl md:text-2xl font-black text-white tracking-tight uppercase">TimberMatrix Gateway</h1>
+                <p class="text-xs text-slate-400 max-w-xs mx-auto">Select an isolated tenant node allocation workspace below to initialize your management session.</p>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="authenticateTenantSession('CO-JAD-01')" class="w-full bg-slate-900 border border-slate-800 hover:border-emerald-500 hover:bg-slate-900/80 p-5 rounded-2xl text-left transition group relative flex items-center justify-between focus:outline-none">
+                    <div class="space-y-1 pr-4">
+                        <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Tenant Node 01</span>
+                        <h2 class="text-sm md:text-base font-black text-white group-hover:text-emerald-400 transition tracking-wide">JOADDAI COMPANY LTD</h2>
+                        <p class="text-[11px] text-slate-500">Dedicated logs, custom operators, structural assets registry.</p>
+                    </div>
+                    <div class="shrink-0 w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </button>
+
+                <button onclick="authenticateTenantSession('CO-LSN-02')" class="w-full bg-slate-900 border border-slate-800 hover:border-blue-500 hover:bg-slate-900/80 p-5 rounded-2xl text-left transition group relative flex items-center justify-between focus:outline-none">
+                    <div class="space-y-1 pr-4">
+                        <span class="text-[9px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Tenant Node 02</span>
+                        <h2 class="text-sm md:text-base font-black text-white group-hover:text-blue-400 transition tracking-wide">LESON ROYAL ENTERPRISE</h2>
+                        <p class="text-[11px] text-slate-500">Dedicated operations framework, sales pipelines, custom reports.</p>
+                    </div>
+                    <div class="shrink-0 w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </div>
+                </button>
+            </div>
+
+            <p class="text-center text-[10px] font-mono text-slate-600">Secure Cryptographic Session Partitioning Enforced</p>
+        </div>
+    </section>
+
+    <div id="master-application-workspace" class="hidden flex-1 flex flex-col lg:flex-row">
+        
+        <header id="mobile-action-bar" class="lg:hidden bg-slate-950 text-white p-4 flex justify-between items-center border-b border-slate-800 shrink-0 no-print">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-tree text-emerald-500 text-lg"></i>
+                <div>
+                    <h1 class="font-black text-xs tracking-tight uppercase" id="mobile-tenant-label">TimberMatrix</h1>
+                </div>
+            </div>
+            <button onclick="toggleMobileNavigationDrawer()" class="text-slate-400 hover:text-white p-1 text-lg focus:outline-none">
+                <i id="mobile-menu-icon" class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </header>
+
+        <aside id="system-sidebar" class="hidden lg:flex w-full lg:w-64 bg-slate-900 text-slate-300 flex-col border-r border-slate-800 shrink-0 no-print">
+            <div class="p-5 bg-slate-950 border-b border-slate-800 space-y-2">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-tree text-emerald-500 text-xl"></i>
+                    <div>
+                        <h1 class="font-black text-white text-xs tracking-tight uppercase" id="sidebar-tenant-title">Loading Identity...</h1>
+                        <p class="text-[9px] text-slate-500 font-mono tracking-wider uppercase">Active Tenant Environment</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 p-4 space-y-1.5">
+                <p class="text-[9px] font-bold uppercase tracking-wider text-slate-600 px-3 mb-2">Core Pipelines</p>
+                
+                <button onclick="switchSystemModule('mod-dashboard')" id="nav-mod-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
+                    <i class="fa-solid fa-chart-pie w-4"></i><span>System Dashboard</span>
+                </button>
+                
+                <button onclick="switchSystemModule('mod-production')" id="nav-mod-production" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
+                    <i class="fa-solid fa-boxes-stacked w-4"></i><span>Production Intake</span>
+                </button>
+                
+                <button onclick="switchSystemModule('mod-loading')" id="nav-mod-loading" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
+                    <i class="fa-solid fa-truck-moving w-4"></i><span>Loading / Dispatch</span>
+                </button>
+                
+                <button onclick="switchSystemModule('mod-sales')" id="nav-mod-sales" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
+                    <i class="fa-solid fa-file-invoice-dollar w-4"></i><span>Commercial Sales</span>
+                </button>
+
+                <button onclick="switchSystemModule('mod-reports')" id="nav-mod-reports" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
+                    <i class="fa-solid fa-print w-4"></i><span>Reports & Export</span>
+                </button>
+
+                <div class="pt-4 border-t border-slate-800 space-y-1">
+                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-600 px-3 mb-2">Session Infrastructure</p>
+                    <button onclick="switchActiveTenantContextGateway()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-amber-400 hover:bg-amber-500/10">
+                        <i class="fa-solid fa-right-from-bracket w-4"></i><span>Switch Company</span>
+                    </button>
+                    <button onclick="terminateSessionLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-rose-400 hover:bg-rose-500/10">
+                        <i class="fa-solid fa-power-off w-4"></i><span>Log Out</span>
+                    </button>
+                </div>
+            </nav>
+            <div class="hidden lg:block p-4 bg-slate-950 border-t border-slate-800 text-[10px] text-center font-mono text-slate-600">ISOLATION SECURE</div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+            
+            <section id="pinned-global-banner" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 custom-shadow flex flex-col justify-between global-kpi-card">
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Intake (Actual)</span>
+                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-intake" class="text-lg md:text-xl font-black text-slate-900">0</span><span class="text-[9px] font-bold text-slate-400 font-mono">pcs</span></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 custom-shadow flex flex-col justify-between global-kpi-card">
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Sold Out</span>
+                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-sold" class="text-lg md:text-xl font-black text-emerald-600">0</span><span class="text-[9px] font-bold text-slate-400 font-mono">pcs</span></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200 custom-shadow flex flex-col justify-between global-kpi-card">
+                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Dispatched</span>
+                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-dispatched" class="text-lg md:text-xl font-black text-amber-600">0</span><span class="text-[9px] font-bold text-slate-400 font-mono">pcs</span></div>
+                </div>
+                <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/20 custom-shadow flex flex-col justify-between global-kpi-card">
+                    <span class="text-blue-500 text-[10px] font-bold uppercase tracking-wider">Current Yard Stock</span>
+                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-stock" class="text-lg md:text-xl font-black text-slate-900">0</span><span class="text-[9px] font-bold text-blue-400 font-mono">pcs</span></div>
+                </div>
+            </section>
+
+            <div id="mod-dashboard" class="space-y-6 dynamic-module-panel hidden">
+                <div class="border-b border-slate-200 pb-3">
+                    <h2 class="text-xl font-black text-slate-900 tracking-tight" id="dash-executive-title">Executive Management Overview</h2>
+                    <p class="text-xs text-slate-500">Real-time partitioned macro balance tracking analysis</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6 rounded-2xl custom-shadow space-y-4">
+                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono block">Core Ledger Equation Summary</span>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs text-slate-400"><span>Physical Logs Inducted:</span><span class="font-bold text-white" id="dash-math-intake">0</span></div>
+                            <div class="flex justify-between text-xs text-slate-400"><span>Sales Reductions:</span><span class="font-bold text-rose-400" id="dash-math-sales">0</span></div>
+                            <div class="flex justify-between text-xs text-slate-400"><span>Freight Dispatches:</span><span class="font-bold text-amber-400" id="dash-math-load">0</span></div>
+                            <div class="border-t border-slate-800 pt-2 flex justify-between text-sm"><span>Net Yard Stock:</span><span class="font-black text-emerald-400" id="dash-math-stock">0 pcs</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 custom-shadow md:col-span-2 space-y-3">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Current Stock Mix Breakdown (Physical Intake Metrics)</h3>
+                        <div id="dash-mix-breakdown-holder" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2 text-xs"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mod-production" class="space-y-6 dynamic-module-panel hidden">
+                <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 border-b border-slate-100 pb-3">
+                        <h3 class="font-black text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-id-badge text-slate-400"></i> Operator Registry Infrastructure</h3>
+                        <div class="relative w-full sm:w-48"><span class="absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 text-xs"><i class="fa-solid fa-search"></i></span><input type="text" id="op-registry-search-input" placeholder="Search profiles..." oninput="renderOperatorRegistryEngine()" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-7 pr-2 py-1.5 text-xs font-medium focus:outline-none"></div>
+                    </div>
+                    <div class="grid grid-cols-1 grid-cols-1 lg:grid-cols-3 gap-6">
+                        <form id="form-operator-crud" class="bg-slate-50/50 p-4 rounded-xl border border-slate-200 space-y-3" onsubmit="event.preventDefault();">
+                            <input type="hidden" id="op-target-id-field">
+                            <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Operator Name</label><input type="text" id="op-name-input" required class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none"></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Phone Number</label><input type="text" id="op-phone-input" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Status Tier</label><select id="op-status-input" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold focus:outline-none"><option value="Active">Active Mode</option><option value="Inactive">Inactive Mode</option></select></div>
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="button" onclick="commitOperatorProfileToState()" id="btn-op-add" class="flex-1 bg-slate-900 hover:bg-black text-white font-bold py-2 rounded-lg text-xs transition">Add Operator</button>
+                                <button type="button" onclick="saveOperatorModifications()" id="btn-op-save" class="hidden flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg text-xs transition">Save Change</button>
+                            </div>
+                        </form>
+                        <div class="lg:col-span-2 border border-slate-200 rounded-xl bg-white max-h-48 overflow-y-auto divide-y divide-slate-100" id="operator-list-injection-target"></div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-white p-4 md:p-5 rounded-2xl shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                        <h3 class="text-xs font-bold tracking-widest uppercase text-emerald-400 font-mono"><i class="fa-solid fa-chart-line mr-1"></i> Dynamic Production Analytical Aggregator</h3>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Search Operator by Name</label>
+                            <select id="prod-an-op-filter" onchange="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none"></select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Specific Date</label>
+                            <input type="date" id="prod-an-date" oninput="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Date Range From</label>
+                            <input type="date" id="prod-an-start" oninput="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Date Range To</label>
+                            <input type="date" id="prod-an-end" oninput="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 space-y-3">
+                        <div id="prod-analytics-metrics-banner" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono border-b border-white/10 pb-3">
+                            <div class="bg-white/5 p-2 rounded">Actual Production Intake: <span id="prod-an-total-actual" class="text-white font-black text-sm">0</span> pcs <span class="block text-[9px] text-slate-400 font-sans mt-0.5">(Affects Yard Stock Levels)</span></div>
+                            <div class="bg-blue-950/40 border border-blue-900/50 p-2 rounded">Overall Report Total (Payable Total): <span id="prod-an-total-converted" class="text-emerald-400 font-black text-sm">0</span> units <span class="block text-[9px] text-slate-400 font-sans mt-0.5">(Payroll Target - No Stock Impact)</span></div>
+                        </div>
+                        <div class="space-y-1 text-xs">
+                            <div class="grid-align-header text-slate-400 border-b border-white/10 pb-1 text-[10px] tracking-wider uppercase">
+                                <span>Species [Size]</span>
+                                <span></span>
+                                <span class="text-right">Actual Intake</span>
+                                <span class="text-right">Payable Units</span>
+                                <span class="grid-hide-col"></span>
+                            </div>
+                            <div id="prod-analytics-rows-target" class="divide-y divide-white/5 max-h-48 overflow-y-auto text-slate-200 font-medium"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-3">
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-square-plus text-blue-500 mr-1"></i> File Production Intake</h4>
+                        <form id="form-production-log" class="space-y-3" onsubmit="event.preventDefault();">
+                            <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Date</label><input type="date" id="prod-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-none"></div>
+                            <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Select Saw Operator</label><select id="prod-operator" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none"></select></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Wood Species</label><input type="text" id="prod-species" list="species-presets" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Size Vector</label><input type="text" id="prod-size" list="size-presets" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Actual Quantity</label><input type="number" id="prod-qty" required placeholder="Real piece count" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Payable Total</label><input type="number" id="prod-converted" required placeholder="Payroll calculation units" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none"></div>
+                            </div>
+                            <button type="button" onclick="commitProductionEntryToState()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2 rounded-xl text-xs transition">Log Production Data Pair</button>
+                        </form>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden custom-shadow">
+                        <div class="p-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center"><span class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Intake Execution Master Deck</span></div>
+                        <div class="p-3 bg-slate-100 text-[10px] text-slate-400 uppercase font-mono tracking-wider">
+                            <div class="grid-align-header">
+                                <span>Operator / Date</span>
+                                <span></span>
+                                <span class="text-right">Actual Vol</span>
+                                <span class="text-right">Payable Vol</span>
+                                <span class="grid-hide-col"></span>
+                            </div>
+                        </div>
+                        <div id="table-production-rows" class="divide-y divide-slate-100 max-h-72 overflow-y-auto text-xs font-medium p-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mod-loading" class="space-y-6 dynamic-module-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-4">
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-clipboard-list text-amber-500 mr-1"></i> Freight Allocation Factory</h4>
+                        <form id="form-loading-manifest" class="space-y-3" onsubmit="event.preventDefault();">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Date</label><input type="date" id="load-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Truck Frame ID</label><input type="text" id="load-truck" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Driver Name</label><input type="text" id="load-driver" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Receiving Client</label><input type="text" id="load-entity" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-bold focus:outline-none"></div>
+                            </div>
+
+                            <div class="space-y-3 pt-2">
+                                <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Compartment Configuration (Independent Batches)</p>
+                                <div id="dispatch-batch-cards-container" class="space-y-3"></div>
+                            </div>
+                            <button type="button" onclick="commitLoadingManifestToState()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition">Dispatch Freight Stream</button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 space-y-4" id="dispatch-manifests-ledger-deck"></div>
+                </div>
+            </div>
+
+            <div id="mod-sales" class="space-y-6 dynamic-module-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-4">
+                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-cart-shopping text-emerald-500 mr-1"></i> Multi-Item Checkout Terminal</h4>
+                        <form id="form-sales-ticket" class="space-y-3" onsubmit="event.preventDefault();">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Invoice Date</label><input type="date" id="sale-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
+                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Customer / Client</label><input type="text" id="sale-customer" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-bold focus:outline-none"></div>
+                            </div>
+                            <div class="border-t border-slate-100 pt-3 space-y-2">
+                                <div class="flex justify-between items-center"><span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Transaction Line items</span><button type="button" onclick="injectRowLineToSalesTicketForm()" class="text-[10px] font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded hover:bg-slate-200 transition">Expand Row</button></div>
+                                <div id="sales-ticket-lines-form-wrapper" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+                            </div>
+                            <button type="button" onclick="commitSalesRecordToState()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition">Finalize Sales Invoice</button>
+                        </form>
+                    </div>
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden custom-shadow">
+                        <div class="p-3 bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-500">Commercial Sales Ledger Master Deck</div>
+                        <div class="p-3 bg-slate-100 text-[10px] text-slate-400 uppercase font-mono tracking-wider"><div class="grid-align-header"><span>Client / Invoice</span><span></span><span class="text-right">Qty Sold</span><span class="text-right">Revenue Yield</span><span class="grid-hide-col"></span></div></div>
+                        <div id="table-sales-rows" class="divide-y divide-slate-100 max-h-72 overflow-y-auto text-xs font-medium p-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="mod-reports" class="space-y-6 dynamic-module-panel hidden">
+                <div class="bg-slate-900 text-white p-4 md:p-5 rounded-2xl shadow-xl space-y-4 no-print">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-2"><h3 class="text-xs font-bold tracking-widest uppercase text-slate-400 font-mono">Central Data Query Sieve Engine</h3></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Select Data Context</label><select id="rep-filter-context" onchange="runCentralReportingFilter()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none"><option value="production" class="text-slate-900">Production Inventory Logs</option><option value="loading" class="text-slate-900">Logistics Loading Manifests</option><option value="sales" class="text-slate-900">Commercial Invoices Archive</option></select></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Keyword Search</label><input type="text" id="rep-filter-search" oninput="runCentralReportingFilter()" placeholder="Search records..." class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Date From</label><input type="date" id="rep-filter-start" oninput="runCentralReportingFilter()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Date To</label><input type="date" id="rep-filter-end" oninput="runCentralReportingFilter()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center bg-white p-4 border border-slate-200 rounded-xl custom-shadow no-print">
+                    <span class="text-xs font-bold text-slate-500 hidden sm:inline">Actions:</span>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="triggerFileDownloadCSV()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-csv text-emerald-600"></i> Export Excel</button>
+                        <button onclick="window.print()" class="flex-1 sm:flex-none bg-slate-900 hover:bg-black text-white font-bold px-3 py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-print"></i> Print Report</button>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl custom-shadow p-4 md:p-6 print-card space-y-4">
+                    <h2 id="report-output-header-title" class="text-xs md:text-sm font-black uppercase text-slate-900 tracking-wider text-left border-b pb-3">Production Yield Ledger Records Extraction</h2>
+                    <div id="report-analytic-summary-box" class="bg-slate-50 border border-slate-200 p-4 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-slate-800 no-print"></div>
+                    <div class="p-2 bg-slate-100 text-[10px] text-slate-400 font-mono uppercase tracking-wider"><div class="grid-align-header"><span>Timeline / Node</span><span></span><span class="text-right">Vol (Actual)</span><span class="text-right">Extension</span><span class="grid-hide-col"></span></div></div>
+                    <div id="report-table-body-hook" class="divide-y divide-slate-100 text-xs font-medium"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <datalist id="species-presets"><option value="Wawa"><option value="Mahogany"><option value="Odum"><option value="Teak"></datalist>
+    <datalist id="size-presets"><option value="2x4"><option value="2x6"><option value="1x12"><option value="1x8"><option value="2x12"></datalist>
+
+    <script>
+        // Central Database Matrix with strict mapping keys
+        let db = { 
+            operators: [], 
+            productionEntries: [], 
+            loadingRecords: [], 
+            salesRecords: [] 
+        };
+
+        const companiesDirectoryMap = {
+            'CO-JAD-01': "JOADDAI COMPANY LTD",
+            'CO-LSN-02': "LESON ROYAL ENTERPRISE"
+        };
+
+        let activeTenantSessionToken = null; 
+        let activeModuleViewToken = 'mod-dashboard';
+        const TOTAL_COMPARTMENT_LIMIT = 3;
+        const batchFormStateUIMap = {}; 
+        let salesTicketLineItemsStateArray = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePersistentDatabasePool();
+            verifyActiveSessionStateOnBoot();
+        });
+
+        // ========================================================================= -->
+        // SECURITY GATEWAY & MULTI-TENANT SESSION ROUTINES
+        // ========================================================================= -->
+        window.authenticateTenantSession = function(tenantId) {
+            if (!companiesDirectoryMap[tenantId]) return;
+            activeTenantSessionToken = tenantId;
+            localStorage.setItem('ACTIVE_TENANT_SESSION_TOKEN', tenantId);
+            
+            // Re-render display layers
+            mountApplicationTenantWorkspace();
+        };
+
+        function verifyActiveSessionStateOnBoot() {
+            const preservedToken = localStorage.getItem('ACTIVE_TENANT_SESSION_TOKEN');
+            if (preservedToken && companiesDirectoryMap[preservedToken]) {
+                activeTenantSessionToken = preservedToken;
+                mountApplicationTenantWorkspace();
+            } else {
+                switchActiveTenantContextGateway();
+            }
+        }
+
+        window.switchActiveTenantContextGateway = function() {
+            closeMobileNavigationDrawerIfOpen();
+            document.getElementById('company-gateway-screen').classList.remove('hidden');
+            document.getElementById('master-application-workspace').classList.add('hidden');
+        };
+
+        window.terminateSessionLogout = function() {
+            if(!confirm("Terminate current session logs?")) return;
+            localStorage.removeItem('ACTIVE_TENANT_SESSION_TOKEN');
+            activeTenantSessionToken = null;
+            switchActiveTenantContextGateway();
+        };
+
+        function mountApplicationTenantWorkspace() {
+            const companyName = companiesDirectoryMap[activeTenantSessionToken];
+            
+            // Set Workspace Dynamic Text Nodes
+            document.getElementById('sidebar-tenant-title').innerText = companyName;
+            document.getElementById('mobile-tenant-label').innerText = companyName;
+            document.getElementById('dash-executive-title').innerText = `${companyName} Ledger`;
+
+            // Display view layers
+            document.getElementById('company-gateway-screen').classList.add('hidden');
+            document.getElementById('master-application-workspace').classList.remove('hidden');
+
+            // Force module synchronization 
+            switchSystemModule('mod-dashboard');
+            buildDynamicBatchFormsSkeletonLogistics();
+            evaluateGlobalKPIStateMatrices();
+        }
+
+        // ========================================================================= -->
+        // VIEW ENGINE AND RESPONSIVE DRAWER OVERLAYS
+        // ========================================================================= -->
+        window.toggleMobileNavigationDrawer = function() {
+            const sidebar = document.getElementById('system-sidebar');
+            const menuIcon = document.getElementById('mobile-menu-icon');
+            if(sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden', 'lg:flex');
+                sidebar.classList.add('flex', 'w-full', 'fixed', 'top-[53px]', 'left-0', 'z-50', 'h-[calc(100vh-53px)]');
+                menuIcon.className = "fa-solid fa-xmark";
+            } else {
+                sidebar.classList.add('hidden', 'lg:flex');
+                sidebar.classList.remove('flex', 'w-full', 'fixed', 'top-[53px]', 'left-0', 'z-50', 'h-[calc(100vh-53px)]');
+                menuIcon.className = "fa-solid fa-bars-staggered";
+            }
+        };
+
+        function closeMobileNavigationDrawerIfOpen() {
+            const sidebar = document.getElementById('system-sidebar');
+            const menuIcon = document.getElementById('mobile-menu-icon');
+            if(!sidebar.classList.contains('hidden') && window.innerWidth < 1024) {
+                sidebar.classList.add('hidden', 'lg:flex');
+                sidebar.classList.remove('flex', 'w-full', 'fixed', 'top-[53px]', 'left-0', 'z-50', 'h-[calc(100vh-53px)]');
+                menuIcon.className = "fa-solid fa-bars-staggered";
+            }
+        }
+
+        window.switchSystemModule = function(targetViewIdString) {
+            closeMobileNavigationDrawerIfOpen();
+            activeModuleViewToken = targetViewIdString;
+            document.querySelectorAll('.dynamic-module-panel').forEach(p => p.classList.add('hidden'));
+            document.getElementById(targetViewIdString).classList.remove('hidden');
+
+            ['mod-dashboard', 'mod-production', 'mod-loading', 'mod-sales', 'mod-reports'].forEach(id => {
+                document.getElementById('nav-' + id).className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white";
+            });
+            document.getElementById('nav-' + targetViewIdString).className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-800 text-white shadow-md shadow-black/10";
+
+            if (targetViewIdString === 'mod-production') {
+                synchronizeProductionFormsRegistryDropdownLists();
+                runDynamicProductionAnalyticsEngine();
+            } else if (targetViewIdString === 'mod-loading') {
+                renderLogisticsManifestLedgerCardsDeck();
+            } else if (targetViewIdString === 'mod-sales') {
+                resetAndRebuildSalesTicketCheckoutForm();
+            } else if (targetViewIdString === 'mod-reports') {
+                runCentralReportingFilter();
+            }
+            evaluateGlobalKPIStateMatrices();
+        };
+
+        // ========================================================================= -->
+        // STORAGE AND DATA SECURITY ISOLATION ARCHITECTURE
+        // ========================================================================= -->
+        function initializePersistentDatabasePool() {
+            const memoryDump = localStorage.getItem('MULTI_TENANT_TIMBER_MATRIX_POOL');
+            if (memoryDump) {
+                try { db = JSON.parse(memoryDump); } catch(e) { console.error("Database tracking structure error."); }
+            } else {
+                // Seed fallback tracking sets
+                db.operators = [
+                    { id: "OP-101", companyId: "CO-JAD-01", name: "Kwame Mensah (JOADDAI)", phone: "0244111222", status: "Active" },
+                    { id: "OP-102", companyId: "CO-LSN-02", name: "Amos Boakye (LESON)", phone: "0203556677", status: "Active" }
+                ];
+                writeDatabaseStatesToLocalStorage();
+            }
+        }
+
+        function writeDatabaseStatesToLocalStorage() {
+            localStorage.setItem('MULTI_TENANT_TIMBER_MATRIX_POOL', JSON.stringify(db));
+            evaluateGlobalKPIStateMatrices();
+        }
+
+        // Filter methods isolating active scoped data arrays
+        function getScopedOperators() { return db.operators.filter(o => o.companyId === activeTenantSessionToken); }
+        function getScopedProduction() { return db.productionEntries.filter(p => p.companyId === activeTenantSessionToken); }
+        function getScopedLoading() { return db.loadingRecords.filter(l => l.companyId === activeTenantSessionToken); }
+        function getScopedSales() { return db.salesRecords.filter(s => s.companyId === activeTenantSessionToken); }
+
+        function evaluateGlobalKPIStateMatrices() {
+            if (!activeTenantSessionToken) return;
+
+            const productionSet = getScopedProduction();
+            const salesSet = getScopedSales();
+            const loadingSet = getScopedLoading();
+
+            const sumIntakeActual = productionSet.reduce((acc, row) => acc + (parseInt(row.quantity) || 0), 0);
+            const sumSalesActual = salesSet.reduce((acc, row) => {
+                let s = 0; row.items.forEach(i => s += (parseInt(i.quantity) || 0)); return acc + s;
+            }, 0);
+            const sumDispatchedActual = loadingSet.reduce((acc, row) => acc + (parseInt(row.overallTotal) || 0), 0);
+            const netYardStockCalculated = sumIntakeActual - sumSalesActual - sumDispatchedActual;
+
+            document.getElementById('banner-intake').innerText = sumIntakeActual;
+            document.getElementById('banner-sold').innerText = sumSalesActual;
+            document.getElementById('banner-dispatched').innerText = sumDispatchedActual;
+            document.getElementById('banner-stock').innerText = netYardStockCalculated;
+
+            if (activeModuleViewToken === 'mod-dashboard') {
+                document.getElementById('dash-math-intake').innerText = sumIntakeActual;
+                document.getElementById('dash-math-sales').innerText = sumSalesActual;
+                document.getElementById('dash-math-load').innerText = sumDispatchedActual;
+                document.getElementById('dash-math-stock').innerText = `${netYardStockCalculated} pcs`;
+                renderDashboardStockMixBreakdownTiles();
+            }
+        }
+
+        function renderDashboardStockMixBreakdownTiles() {
+            const container = document.getElementById('dash-mix-breakdown-holder'); container.innerHTML = '';
+            const dimensionVolumeAggregateMap = {};
+
+            getScopedProduction().forEach(r => { dimensionVolumeAggregateMap[r.size] = (dimensionVolumeAggregateMap[r.size] || 0) + parseInt(r.quantity); });
+            getScopedSales().forEach(r => { r.items.forEach(i => { dimensionVolumeAggregateMap[i.size] = (dimensionVolumeAggregateMap[i.size] || 0) - parseInt(i.quantity); }); });
+            getScopedLoading().forEach(r => { r.batches.forEach(b => { b.items.forEach(i => { dimensionVolumeAggregateMap[i.size] = (dimensionVolumeAggregateMap[i.size] || 0) - parseInt(i.quantity); }); }); });
+
+            Object.keys(dimensionVolumeAggregateMap).forEach(k => {
+                container.innerHTML += `<div class="bg-slate-100 p-3 rounded-xl border border-slate-200/60">
+                    <span class="text-slate-400 font-bold font-mono text-[10px] block">${k}</span>
+                    <span class="text-slate-900 text-sm font-black block mt-1">${dimensionVolumeAggregateMap[k]} <span class="text-[9px] text-slate-400">pcs</span></span>
+                </div>`;
+            });
+        }
+
+        // ========================================================================= -->
+        // PIPELINE SUB-WORKSPACES CODE MANAGEMENT ENGINE
+        // ========================================================================= -->
+        function synchronizeProductionFormsRegistryDropdownLists() {
+            const selectElement = document.getElementById('prod-operator');
+            const analyticFilterSelect = document.getElementById('prod-an-op-filter');
+            selectElement.innerHTML = '<option value="">Choose Registry Profile</option>';
+            analyticFilterSelect.innerHTML = '<option value="">All Operators Combined</option>';
+            
+            getScopedOperators().forEach(op => {
+                if (op.status === 'Active') {
+                    const rowOpt = `<option value="${op.name}" data-id="${op.id}">${op.name}</option>`;
+                    selectElement.innerHTML += rowOpt;
+                    analyticFilterSelect.innerHTML += rowOpt;
+                }
+            });
+            renderOperatorRegistryEngine();
+            renderProductionLogsLedgerTableRows();
+        }
+
+        window.runDynamicProductionAnalyticsEngine = function() {
+            const opName = document.getElementById('prod-an-op-filter').value;
+            const singleDate = document.getElementById('prod-an-date').value;
+            const rangeStart = document.getElementById('prod-an-start').value;
+            const rangeEnd = document.getElementById('prod-an-end').value;
+            const targetHook = document.getElementById('prod-analytics-rows-target');
+
+            targetHook.innerHTML = '';
+            let filteredSet = getScopedProduction();
+
+            if (opName) filteredSet = filteredSet.filter(r => r.operatorName === opName);
+            if (singleDate) filteredSet = filteredSet.filter(r => r.date === singleDate);
+            if (rangeStart && rangeEnd) filteredSet = filteredSet.filter(r => r.date >= rangeStart && r.date <= rangeEnd);
+
+            const dimensionsMatrix = {};
+            let grandActualSum = 0;
+            let grandConvertedSum = 0;
+
+            filteredSet.forEach(item => {
+                const matrixKey = `${item.species}||${item.size}`;
+                if (!dimensionsMatrix[matrixKey]) {
+                    dimensionsMatrix[matrixKey] = { species: item.species, size: item.size, quantity: 0, converted: 0 };
+                }
+                dimensionsMatrix[matrixKey].quantity += parseInt(item.quantity) || 0;
+                dimensionsMatrix[matrixKey].converted += parseInt(item.convertedTotal) || 0;
+                grandActualSum += parseInt(item.quantity) || 0;
+                grandConvertedSum += parseInt(item.convertedTotal) || 0;
+            });
+
+            document.getElementById('prod-an-total-actual').innerText = grandActualSum;
+            document.getElementById('prod-an-total-converted').innerText = grandConvertedSum;
+
+            const matrixKeysArray = Object.keys(dimensionsMatrix);
+            if (matrixKeysArray.length === 0) {
+                targetHook.innerHTML = `<div class="py-4 text-center text-slate-500 font-mono text-[11px]">No metrics for selection.</div>`;
+                return;
+            }
+
+            matrixKeysArray.forEach(key => {
+                const node = dimensionsMatrix[key];
+                const div = document.createElement('div');
+                div.className = "grid-align-table py-2 border-b border-white/5";
+                div.innerHTML = `
+                    <span class="font-bold text-white max-w-[80px] truncate md:max-w-none">${node.species}</span>
+                    <span class="text-center font-mono font-bold text-emerald-400 bg-white/5 rounded px-1 py-0.5 text-[10px]">${node.size}</span>
+                    <span class="text-right font-mono text-slate-400">${node.quantity}</span>
+                    <span class="text-right font-mono text-emerald-400 font-black text-xs md:text-sm">${node.converted}</span>
+                    <span class="grid-hide-col"></span>
+                `;
+                targetHook.appendChild(div);
+            });
+        };
+
+        function renderOperatorRegistryEngine() {
+            const listContainer = document.getElementById('operator-list-injection-target');
+            const criteria = document.getElementById('op-registry-search-input').value.toLowerCase().trim();
+            listContainer.innerHTML = '';
+
+            let filteredSource = getScopedOperators();
+            if (criteria) filteredSource = filteredSource.filter(o => o.name.toLowerCase().includes(criteria));
+
+            filteredSource.forEach(op => {
+                listContainer.innerHTML += `<div class="flex justify-between items-center p-3 text-xs bg-white hover:bg-slate-50 transition">
+                    <p class="font-bold text-slate-950">${op.name} <span class="text-[9px] font-mono text-slate-400 font-black ml-1 bg-slate-100 px-1 py-0.5 rounded">${op.id}</span></p>
+                    <button type="button" onclick="mountOperatorProfileToEditorWorkspace('${op.id}')" class="bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded text-[10px] hover:bg-amber-100 transition">Modify</button>
+                </div>`;
+            });
+        }
+
+        function commitOperatorProfileToState() {
+            const name = document.getElementById('op-name-input').value.trim(); if (!name) return;
+            db.operators.push({
+                id: "OP-" + Math.floor(100 + Math.random() * 900), 
+                companyId: activeTenantSessionToken,
+                name: name,
+                phone: document.getElementById('op-phone-input').value.trim(), 
+                status: document.getElementById('op-status-input').value, 
+                createdAt: new Date().toISOString()
+            });
+            document.getElementById('form-operator-crud').reset(); 
+            writeDatabaseStatesToLocalStorage(); 
+            synchronizeProductionFormsRegistryDropdownLists();
+        }
+
+        window.mountOperatorProfileToEditorWorkspace = function(opId) {
+            const profile = db.operators.find(o => o.id === opId && o.companyId === activeTenantSessionToken); if (!profile) return;
+            document.getElementById('op-target-id-field').value = profile.id;
+            document.getElementById('op-name-input').value = profile.name;
+            document.getElementById('op-phone-input').value = profile.phone;
+            document.getElementById('op-status-input').value = profile.status;
+            document.getElementById('btn-op-add').classList.add('hidden');
+            document.getElementById('btn-op-save').classList.remove('hidden');
+        };
+
+        function saveOperatorModifications() {
+            const targetId = document.getElementById('op-target-id-field').value;
+            const index = db.operators.findIndex(o => o.id === targetId && o.companyId === activeTenantSessionToken);
+            if (index !== -1) {
+                db.operators[index].name = document.getElementById('op-name-input').value.trim();
+                db.operators[index].phone = document.getElementById('op-phone-input').value.trim();
+                db.operators[index].status = document.getElementById('op-status-input').value;
+            }
+            document.getElementById('op-target-id-field').value = ''; document.getElementById('form-operator-crud').reset();
+            document.getElementById('btn-op-add').classList.remove('hidden'); document.getElementById('btn-op-save').classList.add('hidden');
+            writeDatabaseStatesToLocalStorage(); synchronizeProductionFormsRegistryDropdownLists();
+        }
+
+        function commitProductionEntryToState() {
+            const date = document.getElementById('prod-date').value;
+            const opSelect = document.getElementById('prod-operator');
+            const opName = opSelect.value;
+            const species = document.getElementById('prod-species').value.trim();
+            const size = document.getElementById('prod-size').value.trim();
+            const qty = parseInt(document.getElementById('prod-qty').value) || 0;
+            const conv = parseInt(document.getElementById('prod-converted').value) || 0;
+
+            if (!date || !opName || !species || !size || qty <= 0) { alert("Core formatting error."); return; }
+
+            db.productionEntries.unshift({
+                id: "PRD-" + Math.floor(1000 + Math.random() * 9000),
+                companyId: activeTenantSessionToken,
+                operatorId: opSelect.options[opSelect.selectedIndex].getAttribute('data-id'),
+                operatorName: opName, date: date, species: species, size: size, quantity: qty, convertedTotal: conv, createdAt: new Date().toISOString()
+            });
+
+            document.getElementById('prod-species').value = ''; document.getElementById('prod-size').value = '';
+            document.getElementById('prod-qty').value = ''; document.getElementById('prod-converted').value = '';
+            writeDatabaseStatesToLocalStorage(); renderProductionLogsLedgerTableRows(); runDynamicProductionAnalyticsEngine();
+        }
+
+        function renderProductionLogsLedgerTableRows() {
+            const hook = document.getElementById('table-production-rows'); hook.innerHTML = '';
+            getScopedProduction().forEach(r => {
+                const tr = document.createElement('div');
+                tr.className = "grid-align-table py-2.5 border-b border-slate-100 text-slate-700 hover:bg-slate-50 transition";
+                tr.innerHTML = `
+                    <div><p class="font-bold text-slate-900 truncate max-w-[70px] md:max-w-none">${r.operatorName}</p><p class="text-[9px] text-slate-400 font-mono">${r.date}</p></div>
+                    <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 rounded px-1 py-0.5 text-[10px]">${r.size}</span>
+                    <span class="text-right font-mono font-black text-blue-600">${r.quantity}</span>
+                    <span class="text-right font-mono text-emerald-600 font-bold">${r.convertedTotal}</span>
+                    <div class="text-center grid-hide-col"><button onclick="purgeProductionRowInstanceFromState('${r.id}')" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-trash-alt"></i></button></div>
+                `;
+                hook.appendChild(tr);
+            });
+        }
+
+        window.purgeProductionRowInstanceFromState = function(id) {
+            if(!confirm("Purge selected log entry?")) return;
+            db.productionEntries = db.productionEntries.filter(r => r.id !== id);
+            writeDatabaseStatesToLocalStorage(); renderProductionLogsLedgerTableRows(); runDynamicProductionAnalyticsEngine();
+        };
+
+        function buildDynamicBatchFormsSkeletonLogistics() {
+            const wrapper = document.getElementById('dispatch-batch-cards-container'); wrapper.innerHTML = '';
+            const labels = ["1st Batch Total", "2nd Batch Total", "3rd Batch Total"];
+            for (let b = 1; b <= TOTAL_COMPARTMENT_LIMIT; b++) {
+                batchFormStateUIMap[b] = [];
+                wrapper.innerHTML += `<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
+                    <div class="flex justify-between items-center border-b border-slate-200 pb-1">
+                        <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider">Batch #${b}</span>
+                        <button type="button" onclick="injectItemRowToSpecificLogisticsBatchFormCard(${b})" class="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded hover:bg-black transition">Add Line</button>
+                    </div>
+                    <div id="batch-lines-injection-hook-${b}" class="space-y-1.5"></div>
+                    <div class="text-right text-[10px] font-mono text-slate-500 font-bold">${labels[b-1]}: <span id="batch-running-label-${b}" class="text-amber-600 text-xs font-black">0</span></div>
+                </div>`;
+            }
+        }
+
+        window.injectItemRowToSpecificLogisticsBatchFormCard = function(batchIndex) {
+            const lineUuid = "LNE-" + Math.floor(10000 + Math.random() * 90000);
+            batchFormStateUIMap[batchIndex].push({ id: lineUuid, species: '', size: '', quantity: 0 });
+
+            const row = document.createElement('div'); row.id = `logistics-line-row-${lineUuid}`; row.className = "grid grid-cols-12 gap-1 items-center";
+            row.innerHTML = `
+                <div class="col-span-4"><input type="text" list="species-presets" placeholder="Species" oninput="updateLogisticsLineFormStateMemory('${lineUuid}', ${batchIndex}, 'species', this.value)" class="w-full bg-white border border-slate-200 rounded p-1 text-xs focus:outline-none"></div>
+                <div class="col-span-4"><input type="text" list="size-presets" placeholder="Size" oninput="updateLogisticsLineFormStateMemory('${lineUuid}', ${batchIndex}, 'size', this.value)" class="w-full bg-white border border-slate-200 rounded p-1 text-xs text-center focus:outline-none"></div>
+                <div class="col-span-3"><input type="number" placeholder="Qty" oninput="updateLogisticsLineFormStateMemory('${lineUuid}', ${batchIndex}, 'quantity', this.value)" class="w-full bg-white border border-slate-200 rounded p-1 text-xs font-bold text-center focus:outline-none"></div>
+                <div class="col-span-1 text-center"><button type="button" onclick="removeLineRowFromLogisticsBatchFormUIPanel('${lineUuid}', ${batchIndex})" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-circle-minus"></i></button></div>
+            `;
+            document.getElementById(`batch-lines-injection-hook-${batchIndex}`).appendChild(row);
+        };
+
+        window.updateLogisticsLineFormStateMemory = function(lineId, batchIndex, fieldKey, val) {
+            const match = batchFormStateUIMap[batchIndex].find(l => l.id === lineId); if (!match) return;
+            if (fieldKey === 'quantity') match.quantity = parseInt(val) || 0;
+            else match[fieldKey] = val.trim();
+            let s = 0; batchFormStateUIMap[batchIndex].forEach(l => s += l.quantity);
+            document.getElementById(`batch-running-label-${batchIndex}`).innerText = s;
+        };
+
+        window.removeLineRowFromLogisticsBatchFormUIPanel = function(lineId, batchIndex) {
+            document.getElementById(`logistics-line-row-${lineId}`).remove();
+            batchFormStateUIMap[batchIndex] = batchFormStateUIMap[batchIndex].filter(l => l.id !== lineId);
+            let s = 0; batchFormStateUIMap[batchIndex].forEach(l => s += l.quantity);
+            document.getElementById(`batch-running-label-${batchIndex}`).innerText = s;
+        };
+
+        function commitLoadingManifestToState() {
+            const date = document.getElementById('load-date').value; const entity = document.getElementById('load-entity').value.trim();
+            if (!date || !entity) { alert("Missing core framework requirements."); return; }
+
+            const compiledBatches = []; let totalTruckGrandPiecesSum = 0;
+            for (let b = 1; b <= TOTAL_COMPARTMENT_LIMIT; b++) {
+                const validRows = batchFormStateUIMap[b].filter(l => l.species && l.size && l.quantity > 0);
+                if (validRows.length > 0) {
+                    let subSum = 0; validRows.forEach(r => subSum += r.quantity);
+                    compiledBatches.push({
+                        batchNumber: b, subTotal: subSum, items: validRows.map(r => ({ species: r.species, size: r.size, quantity: r.quantity }))
+                    });
+                    totalTruckGrandPiecesSum += subSum;
+                }
+            }
+            if (compiledBatches.length === 0) { alert("Manifest allocation lines are blank."); return; }
+
+            db.loadingRecords.unshift({
+                id: "DIS-" + Math.floor(1000 + Math.random() * 9000),
+                companyId: activeTenantSessionToken,
+                date: date, receivingEntity: entity, truckNumber: document.getElementById('load-truck').value.trim(),
+                driverName: document.getElementById('load-driver').value.trim(), overallTotal: totalTruckGrandPiecesSum, batches: compiledBatches, createdAt: new Date().toISOString()
+            });
+            document.getElementById('form-loading-manifest').reset(); buildDynamicBatchFormsSkeletonLogistics(); writeDatabaseStatesToLocalStorage(); renderLogisticsManifestLedgerCardsDeck();
+        }
+
+        function renderLogisticsManifestLedgerCardsDeck() {
+            const container = document.getElementById('dispatch-manifests-ledger-deck'); container.innerHTML = '';
+            const labelsMap = ["1st Batch Total", "2nd Batch Total", "3rd Batch Total"];
+            const scopedLoading = getScopedLoading();
+
+            if (scopedLoading.length === 0) {
+                container.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center border text-slate-400 font-medium text-xs">No matching tenant freight manifests identified.</div>`; return;
+            }
+
+            scopedLoading.forEach(m => {
+                let dynamicBatchesSubGridHtml = '';
+                m.batches.forEach(b => {
+                    let linesHtml = '';
+                    b.items.forEach(i => {
+                        linesHtml += `<div class="grid-align-table text-[11px] bg-white p-1.5 rounded border border-slate-100">
+                            <span class="font-bold text-slate-800 truncate">${i.species}</span>
+                            <span class="text-center font-mono font-bold text-slate-500 bg-slate-100 rounded px-1 text-[10px]">${i.size}</span>
+                            <span class="text-right font-mono font-black text-slate-900">${i.quantity}</span>
+                            <span></span><span class="grid-hide-col"></span>
+                        </div>`;
+                    });
+                    dynamicBatchesSubGridHtml += `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1">
+                        <div class="flex justify-between items-center text-[9px] font-black text-slate-400 font-mono uppercase tracking-wider border-b pb-0.5">
+                            <span>${labelsMap[b.batchNumber - 1]}</span>
+                            <span class="text-amber-600 font-mono font-black">${b.subTotal}</span>
+                        </div>
+                        <div class="space-y-1">${linesHtml}</div>
+                    </div>`;
+                });
+
+                const card = document.createElement('div'); card.className = "bg-white border border-slate-200 rounded-2xl p-4 md:p-5 custom-shadow space-y-3";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                        <div>
+                            <div class="flex items-center gap-1.5"><span class="text-[9px] font-mono font-bold bg-amber-100 border border-amber-200 text-amber-800 px-1 rounded">${m.id}</span><h5 class="text-xs font-black text-slate-900">Truck: ${m.truckNumber || 'N/A'}</h5></div>
+                        </div>
+                        <div class="flex items-center gap-2 text-right">
+                            <div><span class="text-xs font-black block text-slate-800">${m.date}</span><span class="text-[10px] text-emerald-600 font-bold block">${m.receivingEntity}</span></div>
+                            <button onclick="purgeLoadingManifestRowInstanceFromState('${m.id}')" class="text-slate-300 hover:text-rose-600 transition p-1"><i class="fa-solid fa-trash-alt text-xs"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">${dynamicBatchesSubGridHtml}</div>
+                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs font-bold font-mono">
+                        <span class="text-slate-400 text-[10px] uppercase font-sans font-bold">Overall Manifest Total:</span>
+                        <span class="text-slate-950 font-black text-xs md:text-sm bg-slate-100 px-2.5 py-0.5 rounded">${m.overallTotal} pcs</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.purgeLoadingManifestRowInstanceFromState = function(id) {
+            if(!confirm("Purge historical manifest allocation row?")) return;
+            db.loadingRecords = db.loadingRecords.filter(m => m.id !== id);
+            writeDatabaseStatesToLocalStorage(); renderLogisticsManifestLedgerCardsDeck();
+        };
+
+        function resetAndRebuildSalesTicketCheckoutForm() {
+            salesTicketLineItemsStateArray = []; document.getElementById('sales-ticket-lines-form-wrapper').innerHTML = '';
+            injectRowLineToSalesTicketForm(); renderCommercialSalesTableRows();
+        }
+
+        window.injectRowLineToSalesTicketForm = function() {
+            const lineId = "SLN-" + Math.floor(10000 + Math.random() * 90000);
+            salesTicketLineItemsStateArray.push({ id: lineId, species: '', size: '', quantity: 0, unitPrice: 0, totalPrice: 0 });
+            const row = document.createElement('div'); row.id = `sales-checkout-line-row-${lineId}`; row.className = "grid grid-cols-12 gap-1 items-center border-b border-slate-100 pb-1.5";
+            row.innerHTML = `
+                <div class="col-span-3"><input type="text" list="species-presets" placeholder="Species" oninput="updateSalesLineFormStateMemory('${lineId}', 'species', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs focus:outline-none"></div>
+                <div class="col-span-3"><input type="text" list="size-presets" placeholder="Size" oninput="updateSalesLineFormStateMemory('${lineId}', 'size', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs text-center focus:outline-none"></div>
+                <div class="col-span-2"><input type="number" placeholder="Qty" oninput="updateSalesLineFormStateMemory('${lineId}', 'quantity', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs text-center font-bold focus:outline-none"></div>
+                <div class="col-span-3"><input type="number" placeholder="Price" oninput="updateSalesLineFormStateMemory('${lineId}', 'unitPrice', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs font-mono text-right focus:outline-none"></div>
+                <div class="col-span-1 text-center"><button type="button" onclick="removeLineRowFromSalesTicketFormUIPanel('${lineId}')" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-minus-circle"></i></button></div>
+            `;
+            document.getElementById('sales-ticket-lines-form-wrapper').appendChild(row);
+        };
+
+        window.updateSalesLineFormStateMemory = function(lineId, fieldKey, val) {
+            const match = salesTicketLineItemsStateArray.find(l => l.id === lineId); if (!match) return;
+            if (fieldKey === 'quantity' || fieldKey === 'unitPrice') { match[fieldKey] = parseInt(val) || 0; match.totalPrice = match.quantity * match.unitPrice; }
+            else match[fieldKey] = val.trim();
+        };
+
+        window.removeLineRowFromSalesTicketFormUIPanel = function(lineId) {
+            if (salesTicketLineItemsStateArray.length === 1) return;
+            document.getElementById(`sales-checkout-line-row-${lineId}`).remove();
+            salesTicketLineItemsStateArray = salesTicketLineItemsStateArray.filter(l => l.id !== lineId);
+        };
+
+        function commitSalesRecordToState() {
+            const date = document.getElementById('sale-date').value; const customer = document.getElementById('sale-customer').value.trim();
+            if (!date || !customer) { alert("Required input vectors missing."); return; }
+            const validItems = salesTicketLineItemsStateArray.filter(l => l.species && l.size && l.quantity > 0);
+            if (validItems.length === 0) { alert("Invoice breakdown matrix contains empty entries."); return; }
+
+            let combinedTicketFinancialSum = 0; validItems.forEach(i => combinedTicketFinancialSum += i.totalPrice);
+            db.salesRecords.unshift({
+                id: "SAL-" + Math.floor(1000 + Math.random() * 9000), 
+                companyId: activeTenantSessionToken,
+                date: date, customerName: customer, grandTotal: combinedTicketFinancialSum,
+                items: validItems.map(i => ({ species: i.species, size: i.size, quantity: i.quantity, unitPrice: i.unitPrice, totalPrice: i.totalPrice })), createdAt: new Date().toISOString()
+            });
+            document.getElementById('form-sales-ticket').reset(); resetAndRebuildSalesTicketCheckoutForm(); writeDatabaseStatesToLocalStorage();
+        }
+
+        function renderCommercialSalesTableRows() {
+            const hook = document.getElementById('table-sales-rows'); hook.innerHTML = '';
+            getScopedSales().forEach(s => {
+                s.items.forEach(i => {
+                    const tr = document.createElement('div'); tr.className = "grid-align-table py-2 border-b border-slate-100 text-slate-700 hover:bg-slate-50 transition";
+                    tr.innerHTML = `
+                        <div><span class="font-bold text-slate-900 block truncate max-w-[70px] md:max-w-none">${s.customerName}</span><span class="text-[9px] font-mono text-slate-400">${s.date}</span></div>
+                        <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 rounded px-1 py-0.5 text-[10px]">${i.size}</span>
+                        <span class="text-right font-mono text-emerald-600 font-bold">${i.quantity}</span>
+                        <span class="text-right font-mono text-slate-500">${i.totalPrice}</span>
+                        <div class="text-center grid-hide-col"><button onclick="purgeSalesRowInstanceFromState('${s.id}')" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-trash-alt"></i></button></div>
+                    `;
+                    hook.appendChild(tr);
+                });
+            });
+        }
+
+        window.purgeSalesRowInstanceFromState = function(id) {
+            if(!confirm("Purge selected financial ledger asset row?")) return;
+            db.salesRecords = db.salesRecords.filter(s => s.id !== id);
+            writeDatabaseStatesToLocalStorage(); renderCommercialSalesTableRows();
+        };
+
+        let activeCompiledDatasetCacheForExport = [];
+
+        window.runCentralReportingFilter = function() {
+            const context = document.getElementById('rep-filter-context').value;
+            const search = document.getElementById('rep-filter-search').value.toLowerCase().trim();
+            const start = document.getElementById('rep-filter-start').value;
+            const end = document.getElementById('rep-filter-end').value;
+            const bodyHook = document.getElementById('report-table-body-hook');
+            const summaryBox = document.getElementById('report-analytic-summary-box');
+
+            bodyHook.innerHTML = ''; summaryBox.innerHTML = ''; activeCompiledDatasetCacheForExport = [];
+
+            if (context === 'production') {
+                document.getElementById('report-output-header-title').innerText = "Production Yield Ledger Records Extraction";
+                let set = getScopedProduction();
+                if (search) set = set.filter(r => r.operatorName.toLowerCase().includes(search) || r.species.toLowerCase().includes(search) || r.size.toLowerCase().includes(search));
+                if (start && end) set = set.filter(r => r.date >= start && r.date <= end);
+
+                activeCompiledDatasetCacheForExport = set.map(r => ({ Date: r.date, Node: r.operatorName, Size: r.size, ActualQty: r.quantity, PayableUnits: r.convertedTotal }));
+
+                let act = 0, pay = 0;
+                set.forEach(r => {
+                    act += r.quantity; pay += r.convertedTotal;
+                    bodyHook.innerHTML += `<div class="grid-align-table py-2 border-b border-slate-100">
+                        <div><p class="font-bold truncate max-w-[70px] md:max-w-none">${r.operatorName}</p><p class="text-[9px] text-slate-400">${r.date}</p></div>
+                        <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">${r.size}</span>
+                        <span class="text-right font-mono text-blue-600 font-black">${r.quantity}</span>
+                        <span class="text-right font-mono text-emerald-600 font-bold">${r.convertedTotal}</span>
+                        <span class="grid-hide-col"></span>
+                    </div>`;
+                });
+                summaryBox.innerHTML = `<div><p class="text-[10px] text-slate-400 uppercase">Compiled Production Volume</p><p class="text-xs md:text-sm font-black">${act} pieces</p></div><div><p class="text-[10px] text-slate-400 uppercase">Compiled Payable Calculations</p><p class="text-xs md:text-sm font-black text-emerald-600">${pay} units</p></div>`;
+            
+            } else if (context === 'loading') {
+                document.getElementById('report-output-header-title').innerText = "Logistics Cargo Dispatch Histories Archive";
+                let set = getScopedLoading();
+                if (search) set = set.filter(m => m.receivingEntity.toLowerCase().includes(search));
+                if (start && end) set = set.filter(m => m.date >= start && m.date <= end);
+
+                let cargoPiecesSum = 0;
+                set.forEach(m => {
+                    m.batches.forEach(b => {
+                        b.items.forEach(i => {
+                            cargoPiecesSum += i.quantity;
+                            activeCompiledDatasetCacheForExport.push({ Date: m.date, Node: m.receivingEntity, Size: i.size, ActualQty: i.quantity, PayableUnits: `Batch ${b.batchNumber}` });
+                            bodyHook.innerHTML += `<div class="grid-align-table py-2 border-b border-slate-100">
+                                <div><p class="font-bold truncate max-w-[70px] md:max-w-none">${m.receivingEntity}</p><p class="text-[9px] text-slate-400">${m.date}</p></div>
+                                <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">${i.size}</span>
+                                <span class="text-right font-mono text-amber-600 font-black">${i.quantity}</span>
+                                <span class="text-right font-mono text-slate-400">B-${b.batchNumber}</span>
+                                <span class="grid-hide-col"></span>
+                            </div>`;
+                        });
+                    });
+                });
+                summaryBox.innerHTML = `<div><p class="text-[10px] text-slate-400 uppercase">Shipping Volume Metric</p><p class="text-xs md:text-sm font-black text-amber-600">${cargoPiecesSum} items</p></div>`;
+
+            } else if (context === 'sales') {
+                document.getElementById('report-output-header-title').innerText = "Commercial Invoice Outflow Ledger Archive";
+                let set = getScopedSales();
+                if (search) set = set.filter(s => s.customerName.toLowerCase().includes(search));
+                if (start && end) set = set.filter(s => s.date >= start && s.date <= end);
+
+                let sumRev = 0;
+                set.forEach(s => {
+                    s.items.forEach(i => {
+                        sumRev += i.totalPrice;
+                        activeCompiledDatasetCacheForExport.push({ Date: s.date, Node: s.customerName, Size: i.size, ActualQty: i.quantity, PayableUnits: i.totalPrice });
+                        bodyHook.innerHTML += `<div class="grid-align-table py-2 border-b border-slate-100">
+                            <div><p class="font-bold truncate max-w-[70px] md:max-w-none">${s.customerName}</p><p class="text-[9px] text-slate-400">${s.date}</p></div>
+                            <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">${i.size}</span>
+                            <span class="text-right font-mono text-slate-900 font-bold">${i.quantity}</span>
+                            <span class="text-right font-mono text-emerald-600 font-black">${i.totalPrice}</span>
+                            <span class="grid-hide-col"></span>
+                        </div>`;
+                    });
+                });
+                summaryBox.innerHTML = `<div><p class="text-[10px] text-slate-400 uppercase">Revenue Summary</p><p class="text-xs md:text-sm font-black text-emerald-600">${sumRev}</p></div>`;
+            }
+        };
+
+        window.triggerFileDownloadCSV = function() {
+            if (activeCompiledDatasetCacheForExport.length === 0) { alert("Selection contains no transactional rows."); return; }
+            const context = document.getElementById('rep-filter-context').value;
+            let titleString = context === 'production' ? "Production Yield Ledger Records Extraction" : "TimberMatrix Export";
+            
+            let csvStr = `"${titleString}"\n\nDate,IdentifierNode,Wood_Size,Actual_Quantity,Extension_Units\n`;
+            activeCompiledDatasetCacheForExport.forEach(r => { csvStr += `"${r.Date}","${r.Node}","${r.Size}",${r.ActualQty},"${r.PayableUnits}"\n`; });
+            
+            const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.setAttribute('download', `Tenant_Extract_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        };
+    </script>
+</body>
+</html>
