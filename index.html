@@ -3,1026 +3,1628 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Timber Management Matrix Suite</title>
+    <title>Timber Operations Enterprise Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .custom-shadow { box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); }
-        .gate-shadow { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-        
-        /* Unified Responsive Grid-Table Alignment System */
-        .grid-align-table { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr 1fr 1fr 0.4fr; 
-            gap: 8px; 
-            align-items: center; 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-        
-        /* Fallback for ultra-narrow screens */
-        @media (max-width: 520px) {
-            .grid-align-table {
-                grid-template-columns: 1.2fr 0.8fr 1fr 1fr;
-            }
-            .grid-hide-col { display: none !important; }
+        /* Sticky table utilities */
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            background-color: #f1f5f9;
+            z-index: 10;
         }
-        
-        /* Rule 1: Print Layout Sanitization Rules */
-        @media print {
-            .no-print, #pinned-global-banner, .global-kpi-card, #mobile-action-bar, #system-sidebar { display: none !important; }
-            main { margin: 0 !important; padding: 0 !important; width: 100% !important; }
-            .print-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
-            #report-output-header-title { font-size: 18px !important; color: #000 !important; text-align: center; margin-bottom: 20px; }
+        /* Custom scrollbar for premium touch */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
         }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+<body class="overflow-x-hidden text-slate-800">
 
-    <section id="company-gateway-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 overflow-y-auto">
-        <div class="w-full max-w-md space-y-8 py-6">
-            <div class="text-center space-y-2">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-2xl mb-2">
-                    <i class="fa-solid fa-tree-city"></i>
-                </div>
-                <h1 class="text-xl md:text-2xl font-black text-white tracking-tight uppercase">TimberMatrix Gateway</h1>
-                <p class="text-xs text-slate-400 max-w-xs mx-auto">Select an isolated tenant node allocation workspace below to initialize your management session.</p>
-            </div>
-
-            <div class="space-y-3">
-                <button onclick="authenticateTenantSession('CO-JAD-01')" class="w-full bg-slate-900 border border-slate-800 hover:border-emerald-500 hover:bg-slate-900/80 p-5 rounded-2xl text-left transition group relative flex items-center justify-between focus:outline-none">
-                    <div class="space-y-1 pr-4">
-                        <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Tenant Node 01</span>
-                        <h2 class="text-sm md:text-base font-black text-white group-hover:text-emerald-400 transition tracking-wide">JOADDAI COMPANY LTD</h2>
-                        <p class="text-[11px] text-slate-500">Dedicated logs, custom operators, structural assets registry.</p>
-                    </div>
-                    <div class="shrink-0 w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-emerald-500 group-hover:text-white transition">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </div>
-                </button>
-
-                <button onclick="authenticateTenantSession('CO-LSN-02')" class="w-full bg-slate-900 border border-slate-800 hover:border-blue-500 hover:bg-slate-900/80 p-5 rounded-2xl text-left transition group relative flex items-center justify-between focus:outline-none">
-                    <div class="space-y-1 pr-4">
-                        <span class="text-[9px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Tenant Node 02</span>
-                        <h2 class="text-sm md:text-base font-black text-white group-hover:text-blue-400 transition tracking-wide">LESON ROYAL ENTERPRISE</h2>
-                        <p class="text-[11px] text-slate-500">Dedicated operations framework, sales pipelines, custom reports.</p>
-                    </div>
-                    <div class="shrink-0 w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-blue-500 group-hover:text-white transition">
-                        <i class="fa-solid fa-chevron-right text-xs"></i>
-                    </div>
-                </button>
-            </div>
-
-            <p class="text-center text-[10px] font-mono text-slate-600">Secure Cryptographic Session Partitioning Enforced</p>
-        </div>
-    </section>
-
-    <div id="master-application-workspace" class="hidden flex-1 flex flex-col lg:flex-row">
+    <div class="flex min-h-screen">
         
-        <header id="mobile-action-bar" class="lg:hidden bg-slate-950 text-white p-4 flex justify-between items-center border-b border-slate-800 shrink-0 no-print">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-tree text-emerald-500 text-lg"></i>
-                <div>
-                    <h1 class="font-black text-xs tracking-tight uppercase" id="mobile-tenant-label">TimberMatrix</h1>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 flex flex-col justify-between w-64 transition-transform -translate-x-full bg-slate-900 text-slate-300 md:translate-x-0 md:static md:h-screen">
+            <div>
+                <div class="flex items-center justify-between px-6 py-5 bg-slate-950">
+                    <div class="flex items-center space-x-3">
+                        <div class="flex items-center justify-center w-8 h-8 bg-amber-600 rounded-lg text-white">
+                            <i class="fa-solid fa-tree text-sm"></i>
+                        </div>
+                        <span class="text-base font-bold tracking-wider text-white">TIMBERTECH</span>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-white md:hidden">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
                 </div>
-            </div>
-            <button onclick="toggleMobileNavigationDrawer()" class="text-slate-400 hover:text-white p-1 text-lg focus:outline-none">
-                <i id="mobile-menu-icon" class="fa-solid fa-bars-staggered"></i>
-            </button>
-        </header>
 
-        <aside id="system-sidebar" class="hidden lg:flex w-full lg:w-64 bg-slate-900 text-slate-300 flex-col border-r border-slate-800 shrink-0 no-print">
-            <div class="p-5 bg-slate-950 border-b border-slate-800 space-y-2">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-tree text-emerald-500 text-xl"></i>
+                <div class="flex items-center px-6 py-4 space-x-3 bg-slate-900/50 border-b border-slate-800">
+                    <div class="relative w-10 h-10 overflow-hidden bg-amber-700 rounded-full flex items-center justify-center text-white font-semibold">
+                        KK
+                    </div>
                     <div>
-                        <h1 class="font-black text-white text-xs tracking-tight uppercase" id="sidebar-tenant-title">Loading Identity...</h1>
-                        <p class="text-[9px] text-slate-500 font-mono tracking-wider uppercase">Active Tenant Environment</p>
+                        <h4 class="text-sm font-semibold text-white leading-tight">Kwame K.</h4>
+                        <span class="inline-flex items-center px-2 py-0.5 mt-1 text-xs font-medium text-amber-400 bg-amber-400/10 rounded-full">Yard Supervisor</span>
                     </div>
                 </div>
+
+                <nav class="px-3 py-4 space-y-1">
+                    <p class="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Core</p>
+                    <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group active-nav bg-slate-800 text-white" data-view="dashboard">
+                        <i class="fa-solid fa-chart-pie mr-3 text-slate-400 group-hover:text-amber-500"></i>Dashboard
+                    </button>
+
+                    <p class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Operations</p>
+                    <button onclick="switchView('production-entry')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="production-entry">
+                        <i class="fa-solid fa-square-plus mr-3 text-slate-400 group-hover:text-amber-500"></i>Production Entry
+                    </button>
+                    <button onclick="switchView('production-analytics')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="production-analytics">
+                        <i class="fa-solid fa-chart-line mr-3 text-slate-400 group-hover:text-amber-500"></i>Production Analytics
+                    </button>
+                    <button onclick="switchView('rejected-wood')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="rejected-wood">
+                        <i class="fa-solid fa-ban mr-3 text-slate-400 group-hover:text-amber-500"></i>Rejected Wood
+                    </button>
+                    <button onclick="switchView('salary-calculation')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="salary-calculation">
+                        <i class="fa-solid fa-wallet mr-3 text-slate-400 group-hover:text-amber-500"></i>Salary Calculation
+                    </button>
+
+                    <p class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Logistics</p>
+                    <button onclick="switchView('loading-batches')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="loading-batches">
+                        <i class="fa-solid fa-boxes-stacked mr-3 text-slate-400 group-hover:text-amber-500"></i>Batch Management
+                    </button>
+                    <button onclick="switchView('waybill-dispatch')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="waybill-dispatch">
+                        <i class="fa-solid fa-truck-ramp-box mr-3 text-slate-400 group-hover:text-amber-500"></i>Waybill Dispatch
+                    </button>
+
+                    <p class="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">System</p>
+                    <button onclick="switchView('data-transfer')" class="nav-btn w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors hover:bg-slate-800 hover:text-white group text-slate-400" data-view="data-transfer">
+                        <i class="fa-solid fa-server mr-3 text-slate-400 group-hover:text-amber-500"></i>Data Transfer
+                    </button>
+                </nav>
             </div>
-
-            <nav class="flex-1 p-4 space-y-1.5">
-                <p class="text-[9px] font-bold uppercase tracking-wider text-slate-600 px-3 mb-2">Core Pipelines</p>
-                
-                <button onclick="switchSystemModule('mod-dashboard')" id="nav-mod-dashboard" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
-                    <i class="fa-solid fa-chart-pie w-4"></i><span>System Dashboard</span>
-                </button>
-                
-                <button onclick="switchSystemModule('mod-production')" id="nav-mod-production" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
-                    <i class="fa-solid fa-boxes-stacked w-4"></i><span>Production Intake</span>
-                </button>
-                
-                <button onclick="switchSystemModule('mod-loading')" id="nav-mod-loading" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
-                    <i class="fa-solid fa-truck-moving w-4"></i><span>Loading / Dispatch</span>
-                </button>
-                
-                <button onclick="switchSystemModule('mod-sales')" id="nav-mod-sales" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
-                    <i class="fa-solid fa-file-invoice-dollar w-4"></i><span>Commercial Sales</span>
-                </button>
-
-                <button onclick="switchSystemModule('mod-reports')" id="nav-mod-reports" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white">
-                    <i class="fa-solid fa-print w-4"></i><span>Reports & Export</span>
-                </button>
-
-                <div class="pt-4 border-t border-slate-800 space-y-1">
-                    <p class="text-[9px] font-bold uppercase tracking-wider text-slate-600 px-3 mb-2">Session Infrastructure</p>
-                    <button onclick="switchActiveTenantContextGateway()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-amber-400 hover:bg-amber-500/10">
-                        <i class="fa-solid fa-right-from-bracket w-4"></i><span>Switch Company</span>
-                    </button>
-                    <button onclick="terminateSessionLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-rose-400 hover:bg-rose-500/10">
-                        <i class="fa-solid fa-power-off w-4"></i><span>Log Out</span>
-                    </button>
-                </div>
-            </nav>
-            <div class="hidden lg:block p-4 bg-slate-950 border-t border-slate-800 text-[10px] text-center font-mono text-slate-600">ISOLATION SECURE</div>
+            <div class="p-4 bg-slate-950 text-xs text-slate-500 text-center">
+                v2.1.0 Enterprise Edition
+            </div>
         </aside>
 
-        <main class="flex-1 p-4 md:p-6 space-y-6 overflow-y-auto max-w-7xl mx-auto w-full">
+        <div class="flex-1 flex flex-col min-w-0 overflow-x-hidden">
             
-            <section id="pinned-global-banner" class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="bg-white p-4 rounded-xl border border-slate-200 custom-shadow flex flex-col justify-between global-kpi-card">
-                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Intake (Actual)</span>
-                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-intake" class="text-lg md:text-xl font-black text-slate-900">0</span><span class="text-[9px] font-bold text-slate-400 font-mono">pcs</span></div>
+            <header class="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200 md:px-8">
+                <div class="flex items-center space-x-3">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 focus:outline-none md:hidden">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <h1 id="page-title" class="text-xl font-bold text-slate-900">Dashboard</h1>
                 </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 custom-shadow flex flex-col justify-between global-kpi-card">
-                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Sold Out</span>
-                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-sold" class="text-lg md:text-xl font-black text-emerald-600">0</span><span class="text-[9px] font-bold text-slate-400 font-mono">pcs</span></div>
+                <div class="flex items-center space-x-4">
+                    <span id="live-clock" class="hidden text-xs font-medium text-slate-500 sm:inline-block"></span>
+                    <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 rounded-full border border-emerald-200">
+                        <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span>System Sync Active
+                    </span>
                 </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 custom-shadow flex flex-col justify-between global-kpi-card">
-                    <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Total Dispatched</span>
-                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-dispatched" class="text-lg md:text-xl font-black text-amber-600">0</span><span class="text-[9px] font-bold text-slate-400 font-mono">pcs</span></div>
-                </div>
-                <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/20 custom-shadow flex flex-col justify-between global-kpi-card">
-                    <span class="text-blue-500 text-[10px] font-bold uppercase tracking-wider">Current Yard Stock</span>
-                    <div class="mt-1 flex items-baseline gap-1"><span id="banner-stock" class="text-lg md:text-xl font-black text-slate-900">0</span><span class="text-[9px] font-bold text-blue-400 font-mono">pcs</span></div>
-                </div>
-            </section>
+            </header>
 
-            <div id="mod-dashboard" class="space-y-6 dynamic-module-panel hidden">
-                <div class="border-b border-slate-200 pb-3">
-                    <h2 class="text-xl font-black text-slate-900 tracking-tight" id="dash-executive-title">Executive Management Overview</h2>
-                    <p class="text-xs text-slate-500">Real-time partitioned macro balance tracking analysis</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6 rounded-2xl custom-shadow space-y-4">
-                        <span class="text-slate-400 text-[10px] font-bold uppercase tracking-widest font-mono block">Core Ledger Equation Summary</span>
-                        <div class="space-y-2">
-                            <div class="flex justify-between text-xs text-slate-400"><span>Physical Logs Inducted:</span><span class="font-bold text-white" id="dash-math-intake">0</span></div>
-                            <div class="flex justify-between text-xs text-slate-400"><span>Sales Reductions:</span><span class="font-bold text-rose-400" id="dash-math-sales">0</span></div>
-                            <div class="flex justify-between text-xs text-slate-400"><span>Freight Dispatches:</span><span class="font-bold text-amber-400" id="dash-math-load">0</span></div>
-                            <div class="border-t border-slate-800 pt-2 flex justify-between text-sm"><span>Net Yard Stock:</span><span class="font-black text-emerald-400" id="dash-math-stock">0 pcs</span></div>
-                        </div>
-                    </div>
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 custom-shadow md:col-span-2 space-y-3">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Current Stock Mix Breakdown (Physical Intake Metrics)</h3>
-                        <div id="dash-mix-breakdown-holder" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2 text-xs"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="mod-production" class="space-y-6 dynamic-module-panel hidden">
-                <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 border-b border-slate-100 pb-3">
-                        <h3 class="font-black text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2"><i class="fa-solid fa-id-badge text-slate-400"></i> Operator Registry Infrastructure</h3>
-                        <div class="relative w-full sm:w-48"><span class="absolute inset-y-0 left-0 flex items-center pl-2.5 text-slate-400 text-xs"><i class="fa-solid fa-search"></i></span><input type="text" id="op-registry-search-input" placeholder="Search profiles..." oninput="renderOperatorRegistryEngine()" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-7 pr-2 py-1.5 text-xs font-medium focus:outline-none"></div>
-                    </div>
-                    <div class="grid grid-cols-1 grid-cols-1 lg:grid-cols-3 gap-6">
-                        <form id="form-operator-crud" class="bg-slate-50/50 p-4 rounded-xl border border-slate-200 space-y-3" onsubmit="event.preventDefault();">
-                            <input type="hidden" id="op-target-id-field">
-                            <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Operator Name</label><input type="text" id="op-name-input" required class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none"></div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Phone Number</label><input type="text" id="op-phone-input" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Status Tier</label><select id="op-status-input" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold focus:outline-none"><option value="Active">Active Mode</option><option value="Inactive">Inactive Mode</option></select></div>
+            <main class="flex-1 p-6 space-y-8 md:p-8 overflow-y-auto max-w-[1600px] w-full mx-auto">
+                
+                <section id="view-dashboard" class="view-panel space-y-6">
+                    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-slate-500">Today's Total Yield</p>
+                                <div class="p-2.5 bg-amber-50 text-amber-700 rounded-lg"><i class="fa-solid fa-cubes text-sm"></i></div>
                             </div>
-                            <div class="flex gap-2 pt-2">
-                                <button type="button" onclick="commitOperatorProfileToState()" id="btn-op-add" class="flex-1 bg-slate-900 hover:bg-black text-white font-bold py-2 rounded-lg text-xs transition">Add Operator</button>
-                                <button type="button" onclick="saveOperatorModifications()" id="btn-op-save" class="hidden flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg text-xs transition">Save Change</button>
+                            <p id="dash-today-prod" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+                            <p class="mt-1 text-xs text-slate-400">Gross board count metrics</p>
+                        </div>
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-slate-500">Rejections Staged</p>
+                                <div class="p-2.5 bg-rose-50 text-rose-700 rounded-lg"><i class="fa-solid fa-triangle-exclamation text-sm"></i></div>
                             </div>
-                        </form>
-                        <div class="lg:col-span-2 border border-slate-200 rounded-xl bg-white max-h-48 overflow-y-auto divide-y divide-slate-100" id="operator-list-injection-target"></div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900 text-white p-4 md:p-5 rounded-2xl shadow-xl space-y-4">
-                    <div class="flex items-center justify-between border-b border-white/10 pb-2">
-                        <h3 class="text-xs font-bold tracking-widest uppercase text-emerald-400 font-mono"><i class="fa-solid fa-chart-line mr-1"></i> Dynamic Production Analytical Aggregator</h3>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Search Operator by Name</label>
-                            <select id="prod-an-op-filter" onchange="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none"></select>
+                            <p id="dash-today-reject" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+                            <p class="mt-1 text-xs text-rose-600 font-medium"><i class="fa-solid fa-arrow-down mr-1"></i>Deducted directly from salary payouts</p>
                         </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Specific Date</label>
-                            <input type="date" id="prod-an-date" oninput="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-slate-500">Active Loading Batches</p>
+                                <div class="p-2.5 bg-blue-50 text-blue-700 rounded-lg"><i class="fa-solid fa-boxes-packing text-sm"></i></div>
+                            </div>
+                            <p id="dash-active-batches" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+                            <p class="mt-1 text-xs text-slate-400">Awaiting dispatch Waybills</p>
                         </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Date Range From</label>
-                            <input type="date" id="prod-an-start" oninput="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Select Date Range To</label>
-                            <input type="date" id="prod-an-end" oninput="runDynamicProductionAnalyticsEngine()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-medium text-slate-500">Dispatched Volume</p>
+                                <div class="p-2.5 bg-emerald-50 text-emerald-700 rounded-lg"><i class="fa-solid fa-truck-fast text-sm"></i></div>
+                            </div>
+                            <p id="dash-total-loaded" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+                            <p class="mt-1 text-xs text-slate-400">Total running loaded products</p>
                         </div>
                     </div>
 
-                    <div class="bg-white/5 border border-white/10 rounded-xl p-3 md:p-4 space-y-3">
-                        <div id="prod-analytics-metrics-banner" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono border-b border-white/10 pb-3">
-                            <div class="bg-white/5 p-2 rounded">Actual Production Intake: <span id="prod-an-total-actual" class="text-white font-black text-sm">0</span> pcs <span class="block text-[9px] text-slate-400 font-sans mt-0.5">(Affects Yard Stock Levels)</span></div>
-                            <div class="bg-blue-950/40 border border-blue-900/50 p-2 rounded">Overall Report Total (Payable Total): <span id="prod-an-total-converted" class="text-emerald-400 font-black text-sm">0</span> units <span class="block text-[9px] text-slate-400 font-sans mt-0.5">(Payroll Target - No Stock Impact)</span></div>
-                        </div>
-                        <div class="space-y-1 text-xs">
-                            <div class="grid-align-header text-slate-400 border-b border-white/10 pb-1 text-[10px] tracking-wider uppercase">
-                                <span>Species [Size]</span>
-                                <span></span>
-                                <span class="text-right">Actual Intake</span>
-                                <span class="text-right">Payable Units</span>
-                                <span class="grid-hide-col"></span>
-                            </div>
-                            <div id="prod-analytics-rows-target" class="divide-y divide-white/5 max-h-48 overflow-y-auto text-slate-200 font-medium"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-3">
-                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-square-plus text-blue-500 mr-1"></i> File Production Intake</h4>
-                        <form id="form-production-log" class="space-y-3" onsubmit="event.preventDefault();">
-                            <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Date</label><input type="date" id="prod-date" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-medium focus:outline-none"></div>
-                            <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Select Saw Operator</label><select id="prod-operator" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none"></select></div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Wood Species</label><input type="text" id="prod-species" list="species-presets" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Size Vector</label><input type="text" id="prod-size" list="size-presets" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none"></div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Actual Quantity</label><input type="number" id="prod-qty" required placeholder="Real piece count" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Payable Total</label><input type="number" id="prod-converted" required placeholder="Payroll calculation units" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none"></div>
-                            </div>
-                            <button type="button" onclick="commitProductionEntryToState()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2 rounded-xl text-xs transition">Log Production Data Pair</button>
-                        </form>
-                    </div>
-
-                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden custom-shadow">
-                        <div class="p-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center"><span class="text-xs font-bold uppercase tracking-wider text-slate-500">Live Intake Execution Master Deck</span></div>
-                        <div class="p-3 bg-slate-100 text-[10px] text-slate-400 uppercase font-mono tracking-wider">
-                            <div class="grid-align-header">
-                                <span>Operator / Date</span>
-                                <span></span>
-                                <span class="text-right">Actual Vol</span>
-                                <span class="text-right">Payable Vol</span>
-                                <span class="grid-hide-col"></span>
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                                <h3 class="text-base font-bold text-slate-900 mb-4">Daily & Monthly Performance Metrics Overview</h3>
+                                <div class="p-4 bg-slate-50 border border-slate-100 rounded-lg flex flex-col sm:flex-row justify-around gap-4 text-center">
+                                    <div>
+                                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Month Total Production</span>
+                                        <p id="dash-month-total" class="text-2xl font-bold text-slate-800 mt-0.5">0</p>
+                                    </div>
+                                    <div class="border-t sm:border-t-0 sm:border-l border-slate-200 pt-3 sm:pt-0 sm:pl-4">
+                                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Month Quality Yield Rate</span>
+                                        <p id="dash-yield-rate" class="text-2xl font-bold text-emerald-600 mt-0.5">100%</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div id="table-production-rows" class="divide-y divide-slate-100 max-h-72 overflow-y-auto text-xs font-medium p-3"></div>
-                    </div>
-                </div>
-            </div>
 
-            <div id="mod-loading" class="space-y-6 dynamic-module-panel hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-4">
-                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-clipboard-list text-amber-500 mr-1"></i> Freight Allocation Factory</h4>
-                        <form id="form-loading-manifest" class="space-y-3" onsubmit="event.preventDefault();">
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Date</label><input type="date" id="load-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Truck Frame ID</label><input type="text" id="load-truck" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                            <h3 class="text-base font-bold text-slate-900 mb-4">Operator Productivity Tracker</h3>
+                            <div id="dash-operator-list" class="space-y-4 max-h-[320px] overflow-y-auto pr-1">
+                                <p class="text-sm text-slate-400 text-center py-8">No current session database records found.</p>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Driver Name</label><input type="text" id="load-driver" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Receiving Client</label><input type="text" id="load-entity" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-bold focus:outline-none"></div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="view-production-entry" class="view-panel hidden space-y-6">
+                    <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                        <h3 class="text-base font-bold text-slate-900 mb-4">Open Dynamic Production Entry Intake Session</h3>
+                        
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-2xl mb-6">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Operator</label>
+                                <input type="text" id="prod-operator" placeholder="Enter full name (e.g. John)" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Production Date</label>
+                                <input type="date" id="prod-date" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <hr class="border-slate-100 my-6">
+
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-bold text-slate-700">Species and Dimension Matrix Rows</h4>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="addProductionMatrixRow()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 rounded-lg border border-amber-200 hover:bg-amber-100 transition-colors">
+                                        <i class="fa-solid fa-plus mr-1.5"></i>Add Entry Row
+                                    </button>
+                                </div>
                             </div>
 
-                            <div class="space-y-3 pt-2">
-                                <p class="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Compartment Configuration (Independent Batches)</p>
-                                <div id="dispatch-batch-cards-container" class="space-y-3"></div>
+                            <div class="overflow-x-auto rounded-lg border border-slate-200">
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                                            <th class="px-4 py-3">Species Profile</th>
+                                            <th class="px-4 py-3">Dimensional Size Spec</th>
+                                            <th class="px-4 py-3 w-48">Gross Production Quantity</th>
+                                            <th class="px-4 py-3 w-20 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="production-matrix-rows">
+                                        </tbody>
+                                </table>
                             </div>
-                            <button type="button" onclick="commitLoadingManifestToState()" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-xl text-xs transition">Dispatch Freight Stream</button>
-                        </form>
-                    </div>
-                    <div class="lg:col-span-2 space-y-4" id="dispatch-manifests-ledger-deck"></div>
-                </div>
-            </div>
 
-            <div id="mod-sales" class="space-y-6 dynamic-module-panel hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-4 md:p-5 rounded-2xl border border-slate-200 custom-shadow space-y-4">
-                        <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-cart-shopping text-emerald-500 mr-1"></i> Multi-Item Checkout Terminal</h4>
-                        <form id="form-sales-ticket" class="space-y-3" onsubmit="event.preventDefault();">
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Invoice Date</label><input type="date" id="sale-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none"></div>
-                                <div><label class="text-[10px] font-bold text-slate-400 uppercase block mb-0.5">Customer / Client</label><input type="text" id="sale-customer" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs font-bold focus:outline-none"></div>
+                            <div class="flex justify-end pt-4">
+                                <button type="button" onclick="commitProductionSession()" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 focus:ring-4 focus:ring-slate-900/10 transition-colors shadow-sm">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-2"></i>Commit Production Run Session
+                                </button>
                             </div>
-                            <div class="border-t border-slate-100 pt-3 space-y-2">
-                                <div class="flex justify-between items-center"><span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Transaction Line items</span><button type="button" onclick="injectRowLineToSalesTicketForm()" class="text-[10px] font-bold bg-slate-100 text-slate-800 px-2 py-0.5 rounded hover:bg-slate-200 transition">Expand Row</button></div>
-                                <div id="sales-ticket-lines-form-wrapper" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="view-production-analytics" class="view-panel hidden space-y-6">
+                    <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                        <h3 class="text-base font-bold text-slate-900 mb-4">Production Analytics Filtering System</h3>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Operator Filter</label>
+                                <input type="text" id="analytic-operator-filter" placeholder="All Operators" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
                             </div>
-                            <button type="button" onclick="commitSalesRecordToState()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition">Finalize Sales Invoice</button>
-                        </form>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Production Date (Single)</label>
+                                <input type="date" id="analytic-single-date" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Start Date (Range)</label>
+                                <input type="date" id="analytic-start-date" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">End Date (Range)</label>
+                                <input type="date" id="analytic-end-date" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 mt-4 justify-end">
+                            <button onclick="clearAnalyticsFilters()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">Clear</button>
+                            <button onclick="executeAnalyticsQuery()" class="px-5 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors shadow-sm"><i class="fa-solid fa-magnifying-glass mr-2"></i>Query Records Database</button>
+                        </div>
                     </div>
-                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 overflow-hidden custom-shadow">
-                        <div class="p-3 bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-500">Commercial Sales Ledger Master Deck</div>
-                        <div class="p-3 bg-slate-100 text-[10px] text-slate-400 uppercase font-mono tracking-wider"><div class="grid-align-header"><span>Client / Invoice</span><span></span><span class="text-right">Qty Sold</span><span class="text-right">Revenue Yield</span><span class="grid-hide-col"></span></div></div>
-                        <div id="table-sales-rows" class="divide-y divide-slate-100 max-h-72 overflow-y-auto text-xs font-medium p-3"></div>
-                    </div>
-                </div>
-            </div>
 
-            <div id="mod-reports" class="space-y-6 dynamic-module-panel hidden">
-                <div class="bg-slate-900 text-white p-4 md:p-5 rounded-2xl shadow-xl space-y-4 no-print">
-                    <div class="flex items-center justify-between border-b border-white/10 pb-2"><h3 class="text-xs font-bold tracking-widest uppercase text-slate-400 font-mono">Central Data Query Sieve Engine</h3></div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Select Data Context</label><select id="rep-filter-context" onchange="runCentralReportingFilter()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none"><option value="production" class="text-slate-900">Production Inventory Logs</option><option value="loading" class="text-slate-900">Logistics Loading Manifests</option><option value="sales" class="text-slate-900">Commercial Invoices Archive</option></select></div>
-                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Keyword Search</label><input type="text" id="rep-filter-search" oninput="runCentralReportingFilter()" placeholder="Search records..." class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
-                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Date From</label><input type="date" id="rep-filter-start" oninput="runCentralReportingFilter()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
-                        <div><label class="text-[10px] font-bold text-slate-400 tracking-wider block mb-1 uppercase">Date To</label><input type="date" id="rep-filter-end" oninput="runCentralReportingFilter()" class="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
-                    </div>
-                </div>
+                    <div id="analytics-results-container" class="hidden space-y-6">
+                        
+                        <div class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                            <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-xs">
+                                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Evaluated Production Run Volume</span>
+                                <p id="analytic-card-gross" class="text-2xl font-bold text-slate-900 mt-1">0</p>
+                            </div>
+                            <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-xs">
+                                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Aggregate Matrix Distinct Count Species</span>
+                                <p id="analytic-card-species-cnt" class="text-2xl font-bold text-slate-900 mt-1">0</p>
+                            </div>
+                            <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-xs">
+                                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Grand Total Items Metrics</span>
+                                <p id="analytic-card-total" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+                            </div>
+                        </div>
 
-                <div class="flex justify-between items-center bg-white p-4 border border-slate-200 rounded-xl custom-shadow no-print">
-                    <span class="text-xs font-bold text-slate-500 hidden sm:inline">Actions:</span>
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="triggerFileDownloadCSV()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-file-csv text-emerald-600"></i> Export Excel</button>
-                        <button onclick="window.print()" class="flex-1 sm:flex-none bg-slate-900 hover:bg-black text-white font-bold px-3 py-2 rounded-lg text-xs transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-print"></i> Print Report</button>
-                    </div>
-                </div>
+                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                                <h4 class="text-sm font-bold text-slate-900 mb-3"><i class="fa-solid fa-tags text-slate-400 mr-2"></i>Species Breakdown Aggregation</h4>
+                                <div class="overflow-x-auto rounded-lg border border-slate-100">
+                                    <table class="w-full text-left border-collapse text-sm">
+                                        <thead>
+                                            <tr class="bg-slate-50 font-medium text-slate-500 border-b border-slate-100">
+                                                <th class="px-4 py-2.5">Species Identifier Name</th>
+                                                <th class="px-4 py-2.5 text-right w-36">Calculated Counts</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="analytics-species-breakdown-rows"></tbody>
+                                    </table>
+                                </div>
+                            </div>
 
-                <div class="bg-white border border-slate-200 rounded-2xl custom-shadow p-4 md:p-6 print-card space-y-4">
-                    <h2 id="report-output-header-title" class="text-xs md:text-sm font-black uppercase text-slate-900 tracking-wider text-left border-b pb-3">Production Yield Ledger Records Extraction</h2>
-                    <div id="report-analytic-summary-box" class="bg-slate-50 border border-slate-200 p-4 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold text-slate-800 no-print"></div>
-                    <div class="p-2 bg-slate-100 text-[10px] text-slate-400 font-mono uppercase tracking-wider"><div class="grid-align-header"><span>Timeline / Node</span><span></span><span class="text-right">Vol (Actual)</span><span class="text-right">Extension</span><span class="grid-hide-col"></span></div></div>
-                    <div id="report-table-body-hook" class="divide-y divide-slate-100 text-xs font-medium"></div>
-                </div>
-            </div>
-        </main>
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                                <h4 class="text-sm font-bold text-slate-900 mb-3"><i class="fa-solid fa-ruler text-slate-400 mr-2"></i>Dimensional Size Aggregation Breakdown</h4>
+                                <div class="overflow-x-auto rounded-lg border border-slate-100">
+                                    <table class="w-full text-left border-collapse text-sm">
+                                        <thead>
+                                            <tr class="bg-slate-50 font-medium text-slate-500 border-b border-slate-100">
+                                                <th class="px-4 py-2.5">Specification Dimension Matrix Code</th>
+                                                <th class="px-4 py-2.5 text-right w-36">Calculated Counts</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="analytics-size-breakdown-rows"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                            <h4 class="text-sm font-bold text-slate-900 mb-4">Granular Query Session Output Records Database Log Rows</h4>
+                            <div class="overflow-x-auto rounded-lg border border-slate-200 max-h-[400px]">
+                                <table class="w-full text-left border-collapse min-w-[700px] text-sm">
+                                    <thead>
+                                        <tr class="sticky-header bg-slate-50 text-xs font-semibold text-slate-600 uppercase border-b border-slate-200">
+                                            <th class="px-4 py-3">Production Date</th>
+                                            <th class="px-4 py-3">Operator User Name</th>
+                                            <th class="px-4 py-3">Species Profile</th>
+                                            <th class="px-4 py-3">Dimension Size</th>
+                                            <th class="px-4 py-3 text-right pr-6">Logged Production Run Count Volume</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="analytics-main-records-rows" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <section id="view-rejected-wood" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-4">
+                            <h3 class="text-base font-bold text-slate-900 mb-2">Log Rejection Entry Form</h3>
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Incident Date</label>
+                                <input type="date" id="reject-date" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Operator Account Line</label>
+                                <input type="text" id="reject-operator" placeholder="e.g. John" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Wood Timber Species</label>
+                                <input type="text" id="reject-species" placeholder="e.g. Wawa, Ofram, Otie" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Dimension Size Spec Code</label>
+                                <input type="text" id="reject-size" placeholder="e.g. 2x4, 2x2" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Defective Rejected Quantity</label>
+                                <input type="number" id="reject-qty" placeholder="Count units" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Quality Control Remarks / Reason</label>
+                                <textarea id="reject-remarks" rows="2" placeholder="Describe defects (e.g., rot, wane, split)" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none resize-none"></textarea>
+                            </div>
+
+                            <button type="button" onclick="submitRejectionRecord()" class="w-full py-2.5 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 focus:ring-4 focus:ring-rose-500/10 rounded-lg transition-colors shadow-sm">
+                                <i class="fa-solid fa-circle-exclamation mr-2"></i>Commit Rejection Log Transaction
+                            </button>
+                        </div>
+
+                        <div class="lg:col-span-2 p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-4">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                <h3 class="text-base font-bold text-slate-900">Defective Wood Quality Ledger</h3>
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <input type="text" id="reject-filter-op" oninput="renderRejectionLedgerTable()" placeholder="Filter Operator" class="px-2.5 py-1.5 text-xs border border-slate-200 rounded-md outline-none focus:border-amber-500 w-full sm:w-32">
+                                    <input type="date" id="reject-filter-date" onchange="renderRejectionLedgerTable()" class="px-2.5 py-1.5 text-xs border border-slate-200 rounded-md outline-none focus:border-amber-500 w-full sm:w-auto">
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto rounded-lg border border-slate-200 max-h-[480px]">
+                                <table class="w-full text-left border-collapse min-w-[650px] text-sm">
+                                    <thead>
+                                        <tr class="sticky-header bg-slate-50 text-xs font-semibold text-slate-600 uppercase border-b border-slate-200">
+                                            <th class="px-4 py-2.5">Date</th>
+                                            <th class="px-4 py-2.5">Operator</th>
+                                            <th class="px-4 py-2.5">Species</th>
+                                            <th class="px-4 py-2.5">Size</th>
+                                            <th class="px-4 py-2.5 text-right">Qty</th>
+                                            <th class="px-4 py-2.5 pl-6">Defect Remarks</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rejection-ledger-rows" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="view-salary-calculation" class="view-panel hidden space-y-6">
+                    <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs">
+                        <h3 class="text-base font-bold text-slate-900 mb-4">Operator Payroll Processing Engine Matrix</h3>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Target Operator Payroll Profile</label>
+                                <input type="text" id="salary-operator" placeholder="Enter name (e.g. John)" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Start Date window</label>
+                                <input type="date" id="salary-start" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">End Date window</label>
+                                <input type="date" id="salary-end" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end mt-4">
+                            <button onclick="executeSalaryCalculationPayout()" class="px-5 py-2.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">
+                                <i class="fa-solid fa-calculator mr-2"></i>Compute Payroll Yield Slips Metrics
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="salary-statement-sheet" class="hidden p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-6">
+                        <div class="flex justify-between items-start border-b border-slate-100 pb-4">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Payable Production Earnings Statement</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Calculated tracking criteria windows system data parameters</p>
+                            </div>
+                            <div class="text-right text-xs text-slate-500 font-medium">
+                                <p>Processed Date: <span id="salary-meta-date" class="text-slate-800 font-semibold"></span></p>
+                                <p>Operator Target ID Profile: <span id="salary-meta-op" class="text-slate-800 font-semibold"></span></p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                            <div class="p-4 bg-slate-50 border border-slate-100 rounded-xl">
+                                <span class="text-xs font-medium text-slate-500 block">Gross Yield Volume Produced</span>
+                                <span id="salary-calc-gross" class="text-2xl font-bold text-slate-900 mt-1 block">0</span>
+                            </div>
+                            <div class="p-4 bg-rose-50 border border-rose-100/50 rounded-xl">
+                                <span class="text-xs font-medium text-rose-700 block">Deducted Discarded Quality Rejections</span>
+                                <span id="salary-calc-reject" class="text-2xl font-bold text-rose-700 mt-1 block">0</span>
+                            </div>
+                            <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                                <span class="text-xs font-medium text-emerald-700 block">Net Eligible Production Balance</span>
+                                <span id="salary-calc-net" class="text-2xl font-bold text-emerald-700 mt-1 block">0</span>
+                            </div>
+                            <div class="p-4 bg-amber-600 rounded-xl text-white">
+                                <span class="text-xs font-medium text-amber-100 block">Salary Payable Amount</span>
+                                <span id="salary-calc-payout" class="text-2xl font-bold mt-1 block">₵0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg text-xs leading-relaxed flex items-start">
+                            <i class="fa-solid fa-circle-info text-base mr-3 mt-0.5 text-amber-600"></i>
+                            <div>
+                                <span class="font-bold">Enterprise Payroll Audit Rule Framework:</span> Salary Payable payouts is computed strictly under global operational equation rules formula setup definitions parameters: <code class="font-mono font-bold bg-amber-100 px-1 rounded">Salary = Net Production Balance [Gross Count - Rejections Amount] &times; ₵3.00 base yield value metrics rate</code>.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="view-loading-batches" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
+                        
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-4">
+                            <h3 class="text-base font-bold text-slate-900 mb-2">Stage Logistics Allocation Batch</h3>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Batch AlphaNumeric Identifier Tracking ID Code</label>
+                                <input type="text" id="batch-name" placeholder="e.g. Batch 1, Lot 4B" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <hr class="border-slate-100">
+                            <div class="space-y-3">
+                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider">Add Loading Inventory Item Allocation Rows</h4>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Species Profile</label>
+                                    <input type="text" id="batch-input-species" placeholder="e.g. Wawa" class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Dimension Matrix Specs</label>
+                                    <input type="text" id="batch-input-size" placeholder="e.g. 2x2" class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-500 mb-1">Quantity Staged Load Count</label>
+                                    <input type="number" id="batch-input-qty" placeholder="Units count quantity" class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-md outline-none">
+                                </div>
+                                <button type="button" onclick="addItemToStagingBatchMemory()" class="w-full py-2 text-xs font-medium text-amber-800 bg-amber-50 border border-amber-200 rounded-md hover:bg-amber-100 transition-colors">
+                                    <i class="fa-solid fa-plus mr-1"></i>Add Item Line to Batch Memory
+                                </button>
+                            </div>
+
+                            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1 max-h-[150px] overflow-y-auto">
+                                <span class="font-bold text-slate-400 block mb-1">Items Allocation Staged Buffer List:</span>
+                                <div id="batch-items-buffer-display" class="space-y-1 divide-y divide-slate-100 text-slate-600">
+                                    <p class="text-slate-400 italic py-1">Buffer memory arrays empty.</p>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="commitFullBatchToDatabase()" class="w-full py-2.5 text-sm font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors shadow-sm">
+                                <i class="fa-solid fa-box-archive mr-2"></i>Save Full Staged Batch Package
+                            </button>
+                        </div>
+
+                        <div class="lg:col-span-2 space-y-4">
+                            <div class="p-4 bg-slate-900 text-white rounded-xl shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div>
+                                    <span class="text-xs text-slate-400 uppercase font-semibold tracking-wider block">Global Running Logistics Loaded Manifest Pipeline</span>
+                                    <span id="batch-global-grand-total" class="text-3xl font-extrabold tracking-tight text-amber-400 mt-0.5 block">0 Units Staged</span>
+                                </div>
+                                <div class="text-xs text-right text-slate-400">
+                                    <p>Total Batches: <span id="batch-global-count" class="text-white font-bold">0</span></p>
+                                </div>
+                            </div>
+
+                            <div id="logistics-batches-stack-anchor" class="space-y-4">
+                                </div>
+                        </div>
+
+                    </div>
+                </section>
+
+
+                <section id="view-waybill-dispatch" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 items-start">
+                        
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-4">
+                            <h3 class="text-base font-bold text-slate-900 mb-2">Initialize Freight Waybill Manifest Dispatch</h3>
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Vehicle Fleet Registration License Number</label>
+                                <input type="text" id="dispatch-vehicle" placeholder="e.g. GR-2034-26" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Authorized Fleet Driver Name</label>
+                                <input type="text" id="dispatch-driver" placeholder="Full name details" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Destination Transit Depot Delivery Location Address</label>
+                                <input type="text" id="dispatch-destination" placeholder="Depot, client yard point site" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Logistics Manifest Shipping General Remarks</label>
+                                <input type="text" id="dispatch-remarks" placeholder="Transit conditions, instructions" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                            </div>
+
+                            <button type="button" onclick="executeFreightWaybillDispatch()" class="w-full py-3 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:ring-amber-500/10 rounded-lg transition-colors shadow-sm">
+                                <i class="fa-solid fa-truck-dispatch mr-2"></i>Execute Freight Waybill Dispatch
+                            </button>
+                        </div>
+
+                        <div class="lg:col-span-2 space-y-6">
+                            
+                            <div id="dispatch-waybill-manifest-ticket" class="hidden p-8 bg-white border border-slate-300 rounded-xl shadow-xs space-y-6 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-full translate-x-10 -translate-y-10"></div>
+                                
+                                <div class="flex justify-between items-start border-b border-slate-200 pb-5">
+                                    <div>
+                                        <span class="text-xs font-bold text-amber-600 tracking-wider uppercase">Official Freight Waybill Manifest Logistics Document</span>
+                                        <h3 class="text-2xl font-black text-slate-900 tracking-tight mt-1" id="ticket-dispatch-id">DISP-000000</h3>
+                                        <p class="text-xs text-slate-400 mt-1">Generated Dispatch Operational System Timestamp: <span id="ticket-date" class="text-slate-700 font-medium"></span></p>
+                                    </div>
+                                    <div class="p-3 bg-slate-50 border border-slate-100 rounded-lg text-center min-w-[120px]">
+                                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Manifest Cargo Total</span>
+                                        <span class="text-xl font-extrabold text-slate-800 tracking-tight mt-0.5 block" id="ticket-grand-total">0 Pcs</span>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs">
+                                    <div>
+                                        <span class="text-slate-400 font-medium block">Transit Fleet Vehicle</span>
+                                        <span id="ticket-vehicle" class="text-slate-800 font-bold mt-0.5 block"></span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 font-medium block">Authorized Transit Driver</span>
+                                        <span id="ticket-driver" class="text-slate-800 font-bold mt-0.5 block"></span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 font-medium block">Destination Terminal Depot</span>
+                                        <span id="ticket-destination" class="text-slate-800 font-bold mt-0.5 block"></span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 font-medium block">Transit Audit Remarks</span>
+                                        <span id="ticket-remarks" class="text-slate-800 font-bold mt-0.5 block"></span>
+                                    </div>
+                                </div>
+
+                                <div class="space-y-4">
+                                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider"><i class="fa-solid fa-cubes text-slate-400 mr-1.5"></i>Manifest Cargo Deck Item Breakdown Logs Allocation Inventory</h4>
+                                    <div class="overflow-x-auto rounded-lg border border-slate-200">
+                                        <table class="w-full text-left border-collapse text-sm">
+                                            <thead>
+                                                <tr class="bg-slate-100/80 border-b border-slate-200 font-semibold text-slate-700 text-xs uppercase tracking-wider">
+                                                    <th class="px-4 py-2.5">Staging Allocation Source ID Lot Block</th>
+                                                    <th class="px-4 py-2.5">Timber Species Specification Name Identifier</th>
+                                                    <th class="px-4 py-2.5">Dimension Codes Matrix Specs</th>
+                                                    <th class="px-4 py-2.5 text-right pr-6 w-32">Allocated Load Units Count</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="ticket-cargo-rows" class="divide-y divide-slate-100 text-slate-600"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-4">
+                                <h3 class="text-base font-bold text-slate-900">Logistics Fleet Dispatches Master Deck</h3>
+                                <div class="overflow-x-auto rounded-lg border border-slate-200 max-h-[350px]">
+                                    <table class="w-full text-left border-collapse min-w-[750px] text-sm">
+                                        <thead>
+                                            <tr class="sticky-header bg-slate-50 text-xs font-semibold text-slate-600 uppercase border-b border-slate-200">
+                                                <th class="px-4 py-3">Waybill Tracking ID</th>
+                                                <th class="px-4 py-3">Dispatch Date</th>
+                                                <th class="px-4 py-3">Vehicle</th>
+                                                <th class="px-4 py-3">Driver Profile Details</th>
+                                                <th class="px-4 py-3">Destination Terminal Address</th>
+                                                <th class="px-4 py-3 text-right pr-6">Total Manifest Units Load Volume</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dispatch-master-deck-rows" class="divide-y divide-slate-100">
+                                            </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </section>
+
+
+                <section id="view-data-transfer" class="view-panel hidden space-y-6">
+                    <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                        
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-5">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2.5 bg-amber-50 text-amber-700 rounded-lg"><i class="fa-solid fa-file-export text-base"></i></div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Secure Database Export Utility Platform Engine</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">Package structured application local state layers values matrix</p>
+                                </div>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1.5">Optional Filtering Export Session Date Specifics Criteria</label>
+                                    <input type="date" id="export-filter-date" class="w-full px-3.5 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none">
+                                    <p class="text-[10px] text-slate-400 mt-1">Leave filter parameters clean to pipeline global systemic historical arrays backups package data files.</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 pt-2">
+                                    <button type="button" onclick="triggerSystemDataDownload('json')" class="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-200 hover:border-amber-500 hover:bg-amber-50/20 rounded-xl group transition-all text-center">
+                                        <i class="fa-regular fa-file-code text-2xl text-slate-400 group-hover:text-amber-600 mb-2"></i>
+                                        <span class="text-xs font-bold text-slate-700 block">Export JSON Schema Bundle</span>
+                                        <span class="text-[10px] text-slate-400 block mt-0.5">Raw structural data object arrays sync</span>
+                                    </button>
+                                    <button type="button" onclick="triggerSystemDataDownload('excel')" class="flex flex-col items-center justify-center p-4 bg-slate-50 border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/20 rounded-xl group transition-all text-center">
+                                        <i class="fa-regular fa-file-excel text-2xl text-slate-400 group-hover:text-emerald-600 mb-2"></i>
+                                        <span class="text-xs font-bold text-slate-700 block">Export CSV/Excel Grid Manifest</span>
+                                        <span class="text-[10px] text-slate-400 block mt-0.5">Tabular cross-reference analytics audit matrix</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-white border border-slate-200 rounded-xl shadow-xs space-y-5">
+                            <div class="flex items-center space-x-3">
+                                <div class="p-2.5 bg-blue-50 text-blue-700 rounded-lg"><i class="fa-solid fa-file-import text-base"></i></div>
+                                <div>
+                                    <h3 class="text-base font-bold text-slate-900">Secure Database Import Core Synchronization Sandbox</h3>
+                                    <p class="text-xs text-slate-400 mt-0.5">Ingest, process validations checks updates files payload layers</p>
+                                </div>
+                            </div>
+                            <hr class="border-slate-100">
+                            <div class="space-y-4">
+                                <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-slate-50 transition-colors relative cursor-pointer group">
+                                    <input type="file" id="import-file-node" onchange="processImportedFilePayload()" accept=".json" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-300 group-hover:text-blue-500 mb-3 transition-colors"></i>
+                                    <span class="text-xs font-bold text-slate-700 block">Select Data Transfer Transmission JSON Target File Package</span>
+                                    <span class="text-[10px] text-slate-400 block mt-1">Accepts native structural system backup datasets files layers patterns structures specs</span>
+                                </div>
+
+                                <div id="import-preview-canvas" class="hidden p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block"><i class="fa-solid fa-magnifying-glass-chart mr-1.5 text-blue-500"></i>Ingested File Preview Analysis Sandboxed Report</span>
+                                    <div class="grid grid-cols-2 gap-2 text-xs font-medium text-slate-600">
+                                        <p class="bg-white px-2.5 py-1.5 rounded-md border border-slate-100">Production Items Records Count Run: <span id="import-preview-prod-cnt" class="text-slate-900 font-bold">0</span></p>
+                                        <p class="bg-white px-2.5 py-1.5 rounded-md border border-slate-100">Rejections Ledger Rows Count Item: <span id="import-preview-reject-cnt" class="text-slate-900 font-bold">0</span></p>
+                                        <p class="bg-white px-2.5 py-1.5 rounded-md border border-slate-100">Logistics Loading Batches Amount Count: <span id="import-preview-batch-cnt" class="text-slate-900 font-bold">0</span></p>
+                                        <p class="bg-white px-2.5 py-1.5 rounded-md border border-slate-100">Waybills Dispatches Logs Account Count: <span id="import-preview-dispatch-cnt" class="text-slate-900 font-bold">0</span></p>
+                                    </div>
+                                    <button type="button" onclick="commitSandboxPreviewToLiveDatabase()" class="w-full py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/10 rounded-md transition-colors shadow-sm">
+                                        <i class="fa-solid fa-code-merge mr-1.5"></i>Execute De-duplicated Safe Database Conflict Merging Engine
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+
+        </div>
     </div>
 
-    <datalist id="species-presets"><option value="Wawa"><option value="Mahogany"><option value="Odum"><option value="Teak"></datalist>
-    <datalist id="size-presets"><option value="2x4"><option value="2x6"><option value="1x12"><option value="1x8"><option value="2x12"></datalist>
-
     <script>
-        // Central Database Matrix with strict mapping keys
-        let db = { 
-            operators: [], 
-            productionEntries: [], 
-            loadingRecords: [], 
-            salesRecords: [] 
-        };
+        /**
+         * =========================================================================
+         * APPLICATION GLOBAL MEMORY STATE LAYER REPOSITORIES (PRESERVING NATIVE STRUCTURES)
+         * =========================================================================
+         */
+        let PRODUCTION_DATABASE = JSON.parse(localStorage.getItem('TE_PRODUCTION_DB')) || [];
+        let REJECTION_DATABASE  = JSON.parse(localStorage.getItem('TE_REJECTION_DB'))  || [];
+        let BATCHES_DATABASE    = JSON.parse(localStorage.getItem('TE_BATCHES_DB'))    || [];
+        let DISPATCHES_DATABASE = JSON.parse(localStorage.getItem('TE_DISPATCHES_DB')) || [];
 
-        const companiesDirectoryMap = {
-            'CO-JAD-01': "JOADDAI COMPANY LTD",
-            'CO-LSN-02': "LESON ROYAL ENTERPRISE"
-        };
+        // Temporary tracking matrix objects arrays blocks system parameters fields
+        let BATCH_ITEMS_STAGING_BUFFER = [];
+        let PARSED_IMPORT_SANDBOX_OBJECT = null;
 
-        let activeTenantSessionToken = null; 
-        let activeModuleViewToken = 'mod-dashboard';
-        const TOTAL_COMPARTMENT_LIMIT = 3;
-        const batchFormStateUIMap = {}; 
-        let salesTicketLineItemsStateArray = [];
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initializePersistentDatabasePool();
-            verifyActiveSessionStateOnBoot();
+        /**
+         * =========================================================================
+         * LIFECYCLE INITIALIZER & ENGINE ORCHESTRATION BOOTSTRAPPING CONTROLLERS
+         * =========================================================================
+         */
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeLiveSystemClock();
+            synchronizeDashboardStatisticsWidgets();
+            addProductionMatrixRow(); // Injects fallback template open view entry matrix row elements forms parameters setup line input
         });
 
-        // ========================================================================= -->
-        // SECURITY GATEWAY & MULTI-TENANT SESSION ROUTINES
-        // ========================================================================= -->
-        window.authenticateTenantSession = function(tenantId) {
-            if (!companiesDirectoryMap[tenantId]) return;
-            activeTenantSessionToken = tenantId;
-            localStorage.setItem('ACTIVE_TENANT_SESSION_TOKEN', tenantId);
-            
-            // Re-render display layers
-            mountApplicationTenantWorkspace();
-        };
-
-        function verifyActiveSessionStateOnBoot() {
-            const preservedToken = localStorage.getItem('ACTIVE_TENANT_SESSION_TOKEN');
-            if (preservedToken && companiesDirectoryMap[preservedToken]) {
-                activeTenantSessionToken = preservedToken;
-                mountApplicationTenantWorkspace();
-            } else {
-                switchActiveTenantContextGateway();
-            }
+        function initializeLiveSystemClock() {
+            const clockNode = document.getElementById('live-clock');
+            const refreshClock = () => {
+                const now = new Date();
+                clockNode.innerHTML = `<i class="fa-regular fa-clock mr-1.5"></i> ${now.toLocaleDateString()} | ${now.toLocaleTimeString()}`;
+            };
+            refreshClock();
+            setInterval(refreshClock, 1000);
         }
 
-        window.switchActiveTenantContextGateway = function() {
-            closeMobileNavigationDrawerIfOpen();
-            document.getElementById('company-gateway-screen').classList.remove('hidden');
-            document.getElementById('master-application-workspace').classList.add('hidden');
-        };
-
-        window.terminateSessionLogout = function() {
-            if(!confirm("Terminate current session logs?")) return;
-            localStorage.removeItem('ACTIVE_TENANT_SESSION_TOKEN');
-            activeTenantSessionToken = null;
-            switchActiveTenantContextGateway();
-        };
-
-        function mountApplicationTenantWorkspace() {
-            const companyName = companiesDirectoryMap[activeTenantSessionToken];
-            
-            // Set Workspace Dynamic Text Nodes
-            document.getElementById('sidebar-tenant-title').innerText = companyName;
-            document.getElementById('mobile-tenant-label').innerText = companyName;
-            document.getElementById('dash-executive-title').innerText = `${companyName} Ledger`;
-
-            // Display view layers
-            document.getElementById('company-gateway-screen').classList.add('hidden');
-            document.getElementById('master-application-workspace').classList.remove('hidden');
-
-            // Force module synchronization 
-            switchSystemModule('mod-dashboard');
-            buildDynamicBatchFormsSkeletonLogistics();
-            evaluateGlobalKPIStateMatrices();
+        function commitStateToPersistentStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+            synchronizeDashboardStatisticsWidgets();
         }
 
-        // ========================================================================= -->
-        // VIEW ENGINE AND RESPONSIVE DRAWER OVERLAYS
-        // ========================================================================= -->
-        window.toggleMobileNavigationDrawer = function() {
-            const sidebar = document.getElementById('system-sidebar');
-            const menuIcon = document.getElementById('mobile-menu-icon');
-            if(sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden', 'lg:flex');
-                sidebar.classList.add('flex', 'w-full', 'fixed', 'top-[53px]', 'left-0', 'z-50', 'h-[calc(100vh-53px)]');
-                menuIcon.className = "fa-solid fa-xmark";
-            } else {
-                sidebar.classList.add('hidden', 'lg:flex');
-                sidebar.classList.remove('flex', 'w-full', 'fixed', 'top-[53px]', 'left-0', 'z-50', 'h-[calc(100vh-53px)]');
-                menuIcon.className = "fa-solid fa-bars-staggered";
-            }
-        };
+        /**
+         * =========================================================================
+         * VIEW ROUTER INFRASTRUCTURE NAV SWITCH CONTROLLER MATRIX ARCHITECTURE
+         * =========================================================================
+         */
+        function switchView(viewTargetId) {
+            // Panel management display swaps loops nodes elements views canvases
+            document.querySelectorAll('.view-panel').forEach(panel => panel.classList.add('hidden'));
+            document.getElementById(`view-${viewTargetId}`).classList.remove('hidden');
 
-        function closeMobileNavigationDrawerIfOpen() {
-            const sidebar = document.getElementById('system-sidebar');
-            const menuIcon = document.getElementById('mobile-menu-icon');
-            if(!sidebar.classList.contains('hidden') && window.innerWidth < 1024) {
-                sidebar.classList.add('hidden', 'lg:flex');
-                sidebar.classList.remove('flex', 'w-full', 'fixed', 'top-[53px]', 'left-0', 'z-50', 'h-[calc(100vh-53px)]');
-                menuIcon.className = "fa-solid fa-bars-staggered";
-            }
-        }
-
-        window.switchSystemModule = function(targetViewIdString) {
-            closeMobileNavigationDrawerIfOpen();
-            activeModuleViewToken = targetViewIdString;
-            document.querySelectorAll('.dynamic-module-panel').forEach(p => p.classList.add('hidden'));
-            document.getElementById(targetViewIdString).classList.remove('hidden');
-
-            ['mod-dashboard', 'mod-production', 'mod-loading', 'mod-sales', 'mod-reports'].forEach(id => {
-                document.getElementById('nav-' + id).className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition text-slate-400 hover:bg-slate-800/50 hover:text-white";
-            });
-            document.getElementById('nav-' + targetViewIdString).className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition bg-slate-800 text-white shadow-md shadow-black/10";
-
-            if (targetViewIdString === 'mod-production') {
-                synchronizeProductionFormsRegistryDropdownLists();
-                runDynamicProductionAnalyticsEngine();
-            } else if (targetViewIdString === 'mod-loading') {
-                renderLogisticsManifestLedgerCardsDeck();
-            } else if (targetViewIdString === 'mod-sales') {
-                resetAndRebuildSalesTicketCheckoutForm();
-            } else if (targetViewIdString === 'mod-reports') {
-                runCentralReportingFilter();
-            }
-            evaluateGlobalKPIStateMatrices();
-        };
-
-        // ========================================================================= -->
-        // STORAGE AND DATA SECURITY ISOLATION ARCHITECTURE
-        // ========================================================================= -->
-        function initializePersistentDatabasePool() {
-            const memoryDump = localStorage.getItem('MULTI_TENANT_TIMBER_MATRIX_POOL');
-            if (memoryDump) {
-                try { db = JSON.parse(memoryDump); } catch(e) { console.error("Database tracking structure error."); }
-            } else {
-                // Seed fallback tracking sets
-                db.operators = [
-                    { id: "OP-101", companyId: "CO-JAD-01", name: "Kwame Mensah (JOADDAI)", phone: "0244111222", status: "Active" },
-                    { id: "OP-102", companyId: "CO-LSN-02", name: "Amos Boakye (LESON)", phone: "0203556677", status: "Active" }
-                ];
-                writeDatabaseStatesToLocalStorage();
-            }
-        }
-
-        function writeDatabaseStatesToLocalStorage() {
-            localStorage.setItem('MULTI_TENANT_TIMBER_MATRIX_POOL', JSON.stringify(db));
-            evaluateGlobalKPIStateMatrices();
-        }
-
-        // Filter methods isolating active scoped data arrays
-        function getScopedOperators() { return db.operators.filter(o => o.companyId === activeTenantSessionToken); }
-        function getScopedProduction() { return db.productionEntries.filter(p => p.companyId === activeTenantSessionToken); }
-        function getScopedLoading() { return db.loadingRecords.filter(l => l.companyId === activeTenantSessionToken); }
-        function getScopedSales() { return db.salesRecords.filter(s => s.companyId === activeTenantSessionToken); }
-
-        function evaluateGlobalKPIStateMatrices() {
-            if (!activeTenantSessionToken) return;
-
-            const productionSet = getScopedProduction();
-            const salesSet = getScopedSales();
-            const loadingSet = getScopedLoading();
-
-            const sumIntakeActual = productionSet.reduce((acc, row) => acc + (parseInt(row.quantity) || 0), 0);
-            const sumSalesActual = salesSet.reduce((acc, row) => {
-                let s = 0; row.items.forEach(i => s += (parseInt(i.quantity) || 0)); return acc + s;
-            }, 0);
-            const sumDispatchedActual = loadingSet.reduce((acc, row) => acc + (parseInt(row.overallTotal) || 0), 0);
-            const netYardStockCalculated = sumIntakeActual - sumSalesActual - sumDispatchedActual;
-
-            document.getElementById('banner-intake').innerText = sumIntakeActual;
-            document.getElementById('banner-sold').innerText = sumSalesActual;
-            document.getElementById('banner-dispatched').innerText = sumDispatchedActual;
-            document.getElementById('banner-stock').innerText = netYardStockCalculated;
-
-            if (activeModuleViewToken === 'mod-dashboard') {
-                document.getElementById('dash-math-intake').innerText = sumIntakeActual;
-                document.getElementById('dash-math-sales').innerText = sumSalesActual;
-                document.getElementById('dash-math-load').innerText = sumDispatchedActual;
-                document.getElementById('dash-math-stock').innerText = `${netYardStockCalculated} pcs`;
-                renderDashboardStockMixBreakdownTiles();
-            }
-        }
-
-        function renderDashboardStockMixBreakdownTiles() {
-            const container = document.getElementById('dash-mix-breakdown-holder'); container.innerHTML = '';
-            const dimensionVolumeAggregateMap = {};
-
-            getScopedProduction().forEach(r => { dimensionVolumeAggregateMap[r.size] = (dimensionVolumeAggregateMap[r.size] || 0) + parseInt(r.quantity); });
-            getScopedSales().forEach(r => { r.items.forEach(i => { dimensionVolumeAggregateMap[i.size] = (dimensionVolumeAggregateMap[i.size] || 0) - parseInt(i.quantity); }); });
-            getScopedLoading().forEach(r => { r.batches.forEach(b => { b.items.forEach(i => { dimensionVolumeAggregateMap[i.size] = (dimensionVolumeAggregateMap[i.size] || 0) - parseInt(i.quantity); }); }); });
-
-            Object.keys(dimensionVolumeAggregateMap).forEach(k => {
-                container.innerHTML += `<div class="bg-slate-100 p-3 rounded-xl border border-slate-200/60">
-                    <span class="text-slate-400 font-bold font-mono text-[10px] block">${k}</span>
-                    <span class="text-slate-900 text-sm font-black block mt-1">${dimensionVolumeAggregateMap[k]} <span class="text-[9px] text-slate-400">pcs</span></span>
-                </div>`;
-            });
-        }
-
-        // ========================================================================= -->
-        // PIPELINE SUB-WORKSPACES CODE MANAGEMENT ENGINE
-        // ========================================================================= -->
-        function synchronizeProductionFormsRegistryDropdownLists() {
-            const selectElement = document.getElementById('prod-operator');
-            const analyticFilterSelect = document.getElementById('prod-an-op-filter');
-            selectElement.innerHTML = '<option value="">Choose Registry Profile</option>';
-            analyticFilterSelect.innerHTML = '<option value="">All Operators Combined</option>';
-            
-            getScopedOperators().forEach(op => {
-                if (op.status === 'Active') {
-                    const rowOpt = `<option value="${op.name}" data-id="${op.id}">${op.name}</option>`;
-                    selectElement.innerHTML += rowOpt;
-                    analyticFilterSelect.innerHTML += rowOpt;
+            // Set styling highlights states across buttons links sidebars structures setups
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-white');
+                btn.classList.add('text-slate-400');
+                if(btn.getAttribute('data-view') === viewTargetId) {
+                    btn.classList.add('bg-slate-800', 'text-white');
+                    btn.classList.remove('text-slate-400');
                 }
             });
-            renderOperatorRegistryEngine();
-            renderProductionLogsLedgerTableRows();
+
+            // Set human-readable title conversions
+            const titleMap = {
+                'dashboard': 'Dashboard Metrics Control Center',
+                'production-entry': 'Production Intake Session Module',
+                'production-analytics': 'Production Analytics & Yield Summary Reporting Engine',
+                'rejected-wood': 'Defective Wood Rejection Ledger & Quality Control Registry',
+                'salary-calculation': 'Operator Payroll Engine Processing Station',
+                'loading-batches': 'Logistics Loading Batch Staging Management Infrastructure',
+                'waybill-dispatch': 'Freight Waybill Manifest Dispatch Terminal',
+                'data-transfer': 'Data Transfer & Secure Ingestion Sandbox Utility Platform'
+            };
+            document.getElementById('page-title').innerText = titleMap[viewTargetId] || 'Operations Platform';
+            
+            // Contextual internal routines updates executions loops structures hooks handlers parameters checks setups
+            if(viewTargetId === 'dashboard') synchronizeDashboardStatisticsWidgets();
+            if(viewTargetId === 'rejected-wood') renderRejectionLedgerTable();
+            if(viewTargetId === 'waybill-dispatch') renderWaybillMasterDeckTable();
+            
+            // Auto close drawer overlays grids environments panels on triggers operations parameters
+            if(!document.getElementById('sidebar').classList.contains('-translate-x-full')) {
+                toggleMobileMenu();
+            }
         }
 
-        window.runDynamicProductionAnalyticsEngine = function() {
-            const opName = document.getElementById('prod-an-op-filter').value;
-            const singleDate = document.getElementById('prod-an-date').value;
-            const rangeStart = document.getElementById('prod-an-start').value;
-            const rangeEnd = document.getElementById('prod-an-end').value;
-            const targetHook = document.getElementById('prod-analytics-rows-target');
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            if(sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
 
-            targetHook.innerHTML = '';
-            let filteredSet = getScopedProduction();
+        /**
+         * =========================================================================
+         * DASHBOARD STATISTICS DATA LAYER INTERACTIVE SYNCHRONIZATIONS ENGINES
+         * =========================================================================
+         */
+        function synchronizeDashboardStatisticsWidgets() {
+            const todayISO = new Date().toISOString().split('T')[0];
+            
+            // Counts volume metrics aggregations updates loops configurations data metrics blocks
+            let grossTodayCount = 0;
+            PRODUCTION_DATABASE.forEach(item => {
+                if(item.date === todayISO) grossTodayCount += parseInt(item.quantity || 0);
+            });
+            document.getElementById('dash-today-prod').innerText = grossTodayCount;
 
-            if (opName) filteredSet = filteredSet.filter(r => r.operatorName === opName);
-            if (singleDate) filteredSet = filteredSet.filter(r => r.date === singleDate);
-            if (rangeStart && rangeEnd) filteredSet = filteredSet.filter(r => r.date >= rangeStart && r.date <= rangeEnd);
+            let rejectTodayCount = 0;
+            REJECTION_DATABASE.forEach(item => {
+                if(item.date === todayISO) rejectTodayCount += parseInt(item.quantity || 0);
+            });
+            document.getElementById('dash-today-reject').innerText = rejectTodayCount;
 
-            const dimensionsMatrix = {};
-            let grandActualSum = 0;
-            let grandConvertedSum = 0;
+            document.getElementById('dash-active-batches').innerText = BATCHES_DATABASE.length;
 
-            filteredSet.forEach(item => {
-                const matrixKey = `${item.species}||${item.size}`;
-                if (!dimensionsMatrix[matrixKey]) {
-                    dimensionsMatrix[matrixKey] = { species: item.species, size: item.size, quantity: 0, converted: 0 };
-                }
-                dimensionsMatrix[matrixKey].quantity += parseInt(item.quantity) || 0;
-                dimensionsMatrix[matrixKey].converted += parseInt(item.convertedTotal) || 0;
-                grandActualSum += parseInt(item.quantity) || 0;
-                grandConvertedSum += parseInt(item.convertedTotal) || 0;
+            let runningGrandLoadedVolume = 0;
+            DISPATCHES_DATABASE.forEach(manifest => {
+                runningGrandLoadedVolume += parseInt(manifest.totalVolume || 0);
+            });
+            document.getElementById('dash-total-loaded').innerText = runningGrandLoadedVolume;
+
+            // Compute current calendar cycle month metrics statistics parameters variables loops
+            const currentYearMonth = todayISO.substring(0, 7); // Extraction filters fields values formats strings 'YYYY-MM'
+            let grossMonthVolume = 0;
+            let rejectMonthVolume = 0;
+
+            PRODUCTION_DATABASE.forEach(r => { if(r.date && r.date.startsWith(currentYearMonth)) grossMonthVolume += parseInt(r.quantity || 0); });
+            REJECTION_DATABASE.forEach(r => { if(r.date && r.date.startsWith(currentYearMonth)) rejectMonthVolume += parseInt(r.quantity || 0); });
+
+            let netMonthVolume = grossMonthVolume - rejectMonthVolume;
+            if(netMonthVolume < 0) netMonthVolume = 0;
+
+            let structuralYieldRatePercentage = 100;
+            if(grossMonthVolume > 0) {
+                structuralYieldRatePercentage = Math.round((netMonthVolume / grossMonthVolume) * 100);
+            }
+
+            document.getElementById('dash-month-total').innerText = `${netMonthVolume} Pcs Net Balance`;
+            document.getElementById('dash-yield-rate').innerText = `${structuralYieldRatePercentage}% Efficiency`;
+
+            // Render leaderboard tracker panel loop processing dynamic datasets matrix metrics profiles
+            const leaderMap = {};
+            PRODUCTION_DATABASE.forEach(item => {
+                const op = item.operator || 'Unknown Line';
+                leaderMap[op] = (leaderMap[op] || 0) + parseInt(item.quantity || 0);
             });
 
-            document.getElementById('prod-an-total-actual').innerText = grandActualSum;
-            document.getElementById('prod-an-total-converted').innerText = grandConvertedSum;
+            const targetListAnchor = document.getElementById('dash-operator-list');
+            targetListAnchor.innerHTML = '';
+            
+            const sortedOperators = Object.entries(leaderMap).sort((a,b) => b[1] - a[1]);
+            if(sortedOperators.length === 0) {
+                targetListAnchor.innerHTML = `<p class="text-sm text-slate-400 text-center py-8">No historical operational logs context located.</p>`;
+            } else {
+                sortedOperators.forEach(([name, score]) => {
+                    const trackingRowLayoutNodeString = `
+                        <div class="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-100 rounded-lg text-xs">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-2 h-2 bg-amber-500 rounded-full"></div>
+                                <span class="font-semibold text-slate-700">${name}</span>
+                            </div>
+                            <span class="font-bold bg-slate-200/60 px-2 py-0.5 rounded text-slate-800">${score} Boards Gross</span>
+                        </div>
+                    `;
+                    targetListAnchor.insertAdjacentHTML('beforeend', trackingRowLayoutNodeString);
+                });
+            }
+        }
 
-            const matrixKeysArray = Object.keys(dimensionsMatrix);
-            if (matrixKeysArray.length === 0) {
-                targetHook.innerHTML = `<div class="py-4 text-center text-slate-500 font-mono text-[11px]">No metrics for selection.</div>`;
+        /**
+         * =========================================================================
+         * PRODUCTION INTAKE SYSTEM MODULE OPERATIONS DATA CONTROLLERS FIELD TRANS
+         * =========================================================================
+         */
+        function addProductionMatrixRow() {
+            const rowUniqueTrackingIdTimestamp = Date.now() + Math.random().toString(36).substring(2, 7);
+            const matrixTargetInsertionBodyAnchorNode = document.getElementById('production-matrix-rows');
+            
+            const matrixRowMarkupNodeStringHTML = `
+                <tr id="matrix-row-${rowUniqueTrackingIdTimestamp}" class="matrix-row border-b border-slate-100 hover:bg-slate-50/50 transition-colors text-sm">
+                    <td class="p-3">
+                        <input type="text" class="row-species w-full px-2.5 py-1.5 border border-slate-200 rounded focus:border-amber-500 outline-none transition-colors" placeholder="e.g. Wawa, Ofram, Otie" required>
+                    </td>
+                    <td class="p-3">
+                        <input type="text" class="row-size w-full px-2.5 py-1.5 border border-slate-200 rounded focus:border-amber-500 outline-none transition-colors" placeholder="e.g. 2x4, 2x2" required>
+                    </td>
+                    <td class="p-3">
+                        <input type="number" class="row-qty w-full px-2.5 py-1.5 border border-slate-200 rounded focus:border-amber-500 outline-none transition-colors" placeholder="Units count" min="1" required>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button type="button" onclick="removeProductionMatrixRowNodeElementById('${rowUniqueTrackingIdTimestamp}')" class="text-slate-400 hover:text-rose-600 transition-colors p-1">
+                            <i class="fa-regular fa-trash-can text-base"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            matrixTargetInsertionBodyAnchorNode.insertAdjacentHTML('beforeend', matrixRowMarkupNodeStringHTML);
+        }
+
+        function removeProductionMatrixRowNodeElementById(rowTrackIdentifierIdCodeKey) {
+            const targetedRowElementNode = document.getElementById(`matrix-row-${rowTrackIdentifierIdCodeKey}`);
+            if(targetedRowElementNode) {
+                targetedRowElementNode.remove();
+            }
+            // Preserve baseline fallback integrity schema parameters elements grids checks
+            if(document.querySelectorAll('.matrix-row').length === 0) {
+                addProductionMatrixRow();
+            }
+        }
+
+        function commitProductionSession() {
+            const commonOperatorName = document.getElementById('prod-operator').value.trim();
+            const commonSessionDate  = document.getElementById('prod-date').value;
+
+            if(!commonOperatorName || !commonSessionDate) {
+                alert('Validation Integrity Error: Provide clear Operator identification name alongside active Production Date metrics inputs parameter fields.');
                 return;
             }
 
-            matrixKeysArray.forEach(key => {
-                const node = dimensionsMatrix[key];
-                const div = document.createElement('div');
-                div.className = "grid-align-table py-2 border-b border-white/5";
-                div.innerHTML = `
-                    <span class="font-bold text-white max-w-[80px] truncate md:max-w-none">${node.species}</span>
-                    <span class="text-center font-mono font-bold text-emerald-400 bg-white/5 rounded px-1 py-0.5 text-[10px]">${node.size}</span>
-                    <span class="text-right font-mono text-slate-400">${node.quantity}</span>
-                    <span class="text-right font-mono text-emerald-400 font-black text-xs md:text-sm">${node.converted}</span>
-                    <span class="grid-hide-col"></span>
-                `;
-                targetHook.appendChild(div);
-            });
-        };
+            const activeRowElementsNodesList = document.querySelectorAll('.matrix-row');
+            let integratedCollectionRecordsBufferArray = [];
+            let inputValidationErrorRaisedFlag = false;
 
-        function renderOperatorRegistryEngine() {
-            const listContainer = document.getElementById('operator-list-injection-target');
-            const criteria = document.getElementById('op-registry-search-input').value.toLowerCase().trim();
-            listContainer.innerHTML = '';
+            activeRowElementsNodesList.forEach(row => {
+                const specNameInput = row.querySelector('.row-species').value.trim();
+                const specSizeInput = row.querySelector('.row-size').value.trim();
+                const specQtyValue  = parseInt(row.querySelector('.row-qty').value || 0);
 
-            let filteredSource = getScopedOperators();
-            if (criteria) filteredSource = filteredSource.filter(o => o.name.toLowerCase().includes(criteria));
-
-            filteredSource.forEach(op => {
-                listContainer.innerHTML += `<div class="flex justify-between items-center p-3 text-xs bg-white hover:bg-slate-50 transition">
-                    <p class="font-bold text-slate-950">${op.name} <span class="text-[9px] font-mono text-slate-400 font-black ml-1 bg-slate-100 px-1 py-0.5 rounded">${op.id}</span></p>
-                    <button type="button" onclick="mountOperatorProfileToEditorWorkspace('${op.id}')" class="bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded text-[10px] hover:bg-amber-100 transition">Modify</button>
-                </div>`;
-            });
-        }
-
-        function commitOperatorProfileToState() {
-            const name = document.getElementById('op-name-input').value.trim(); if (!name) return;
-            db.operators.push({
-                id: "OP-" + Math.floor(100 + Math.random() * 900), 
-                companyId: activeTenantSessionToken,
-                name: name,
-                phone: document.getElementById('op-phone-input').value.trim(), 
-                status: document.getElementById('op-status-input').value, 
-                createdAt: new Date().toISOString()
-            });
-            document.getElementById('form-operator-crud').reset(); 
-            writeDatabaseStatesToLocalStorage(); 
-            synchronizeProductionFormsRegistryDropdownLists();
-        }
-
-        window.mountOperatorProfileToEditorWorkspace = function(opId) {
-            const profile = db.operators.find(o => o.id === opId && o.companyId === activeTenantSessionToken); if (!profile) return;
-            document.getElementById('op-target-id-field').value = profile.id;
-            document.getElementById('op-name-input').value = profile.name;
-            document.getElementById('op-phone-input').value = profile.phone;
-            document.getElementById('op-status-input').value = profile.status;
-            document.getElementById('btn-op-add').classList.add('hidden');
-            document.getElementById('btn-op-save').classList.remove('hidden');
-        };
-
-        function saveOperatorModifications() {
-            const targetId = document.getElementById('op-target-id-field').value;
-            const index = db.operators.findIndex(o => o.id === targetId && o.companyId === activeTenantSessionToken);
-            if (index !== -1) {
-                db.operators[index].name = document.getElementById('op-name-input').value.trim();
-                db.operators[index].phone = document.getElementById('op-phone-input').value.trim();
-                db.operators[index].status = document.getElementById('op-status-input').value;
-            }
-            document.getElementById('op-target-id-field').value = ''; document.getElementById('form-operator-crud').reset();
-            document.getElementById('btn-op-add').classList.remove('hidden'); document.getElementById('btn-op-save').classList.add('hidden');
-            writeDatabaseStatesToLocalStorage(); synchronizeProductionFormsRegistryDropdownLists();
-        }
-
-        function commitProductionEntryToState() {
-            const date = document.getElementById('prod-date').value;
-            const opSelect = document.getElementById('prod-operator');
-            const opName = opSelect.value;
-            const species = document.getElementById('prod-species').value.trim();
-            const size = document.getElementById('prod-size').value.trim();
-            const qty = parseInt(document.getElementById('prod-qty').value) || 0;
-            const conv = parseInt(document.getElementById('prod-converted').value) || 0;
-
-            if (!date || !opName || !species || !size || qty <= 0) { alert("Core formatting error."); return; }
-
-            db.productionEntries.unshift({
-                id: "PRD-" + Math.floor(1000 + Math.random() * 9000),
-                companyId: activeTenantSessionToken,
-                operatorId: opSelect.options[opSelect.selectedIndex].getAttribute('data-id'),
-                operatorName: opName, date: date, species: species, size: size, quantity: qty, convertedTotal: conv, createdAt: new Date().toISOString()
-            });
-
-            document.getElementById('prod-species').value = ''; document.getElementById('prod-size').value = '';
-            document.getElementById('prod-qty').value = ''; document.getElementById('prod-converted').value = '';
-            writeDatabaseStatesToLocalStorage(); renderProductionLogsLedgerTableRows(); runDynamicProductionAnalyticsEngine();
-        }
-
-        function renderProductionLogsLedgerTableRows() {
-            const hook = document.getElementById('table-production-rows'); hook.innerHTML = '';
-            getScopedProduction().forEach(r => {
-                const tr = document.createElement('div');
-                tr.className = "grid-align-table py-2.5 border-b border-slate-100 text-slate-700 hover:bg-slate-50 transition";
-                tr.innerHTML = `
-                    <div><p class="font-bold text-slate-900 truncate max-w-[70px] md:max-w-none">${r.operatorName}</p><p class="text-[9px] text-slate-400 font-mono">${r.date}</p></div>
-                    <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 rounded px-1 py-0.5 text-[10px]">${r.size}</span>
-                    <span class="text-right font-mono font-black text-blue-600">${r.quantity}</span>
-                    <span class="text-right font-mono text-emerald-600 font-bold">${r.convertedTotal}</span>
-                    <div class="text-center grid-hide-col"><button onclick="purgeProductionRowInstanceFromState('${r.id}')" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-trash-alt"></i></button></div>
-                `;
-                hook.appendChild(tr);
-            });
-        }
-
-        window.purgeProductionRowInstanceFromState = function(id) {
-            if(!confirm("Purge selected log entry?")) return;
-            db.productionEntries = db.productionEntries.filter(r => r.id !== id);
-            writeDatabaseStatesToLocalStorage(); renderProductionLogsLedgerTableRows(); runDynamicProductionAnalyticsEngine();
-        };
-
-        function buildDynamicBatchFormsSkeletonLogistics() {
-            const wrapper = document.getElementById('dispatch-batch-cards-container'); wrapper.innerHTML = '';
-            const labels = ["1st Batch Total", "2nd Batch Total", "3rd Batch Total"];
-            for (let b = 1; b <= TOTAL_COMPARTMENT_LIMIT; b++) {
-                batchFormStateUIMap[b] = [];
-                wrapper.innerHTML += `<div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-2">
-                    <div class="flex justify-between items-center border-b border-slate-200 pb-1">
-                        <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider">Batch #${b}</span>
-                        <button type="button" onclick="injectItemRowToSpecificLogisticsBatchFormCard(${b})" class="text-[10px] bg-slate-900 text-white px-2 py-0.5 rounded hover:bg-black transition">Add Line</button>
-                    </div>
-                    <div id="batch-lines-injection-hook-${b}" class="space-y-1.5"></div>
-                    <div class="text-right text-[10px] font-mono text-slate-500 font-bold">${labels[b-1]}: <span id="batch-running-label-${b}" class="text-amber-600 text-xs font-black">0</span></div>
-                </div>`;
-            }
-        }
-
-        window.injectItemRowToSpecificLogisticsBatchFormCard = function(batchIndex) {
-            const lineUuid = "LNE-" + Math.floor(10000 + Math.random() * 90000);
-            batchFormStateUIMap[batchIndex].push({ id: lineUuid, species: '', size: '', quantity: 0 });
-
-            const row = document.createElement('div'); row.id = `logistics-line-row-${lineUuid}`; row.className = "grid grid-cols-12 gap-1 items-center";
-            row.innerHTML = `
-                <div class="col-span-4"><input type="text" list="species-presets" placeholder="Species" oninput="updateLogisticsLineFormStateMemory('${lineUuid}', ${batchIndex}, 'species', this.value)" class="w-full bg-white border border-slate-200 rounded p-1 text-xs focus:outline-none"></div>
-                <div class="col-span-4"><input type="text" list="size-presets" placeholder="Size" oninput="updateLogisticsLineFormStateMemory('${lineUuid}', ${batchIndex}, 'size', this.value)" class="w-full bg-white border border-slate-200 rounded p-1 text-xs text-center focus:outline-none"></div>
-                <div class="col-span-3"><input type="number" placeholder="Qty" oninput="updateLogisticsLineFormStateMemory('${lineUuid}', ${batchIndex}, 'quantity', this.value)" class="w-full bg-white border border-slate-200 rounded p-1 text-xs font-bold text-center focus:outline-none"></div>
-                <div class="col-span-1 text-center"><button type="button" onclick="removeLineRowFromLogisticsBatchFormUIPanel('${lineUuid}', ${batchIndex})" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-circle-minus"></i></button></div>
-            `;
-            document.getElementById(`batch-lines-injection-hook-${batchIndex}`).appendChild(row);
-        };
-
-        window.updateLogisticsLineFormStateMemory = function(lineId, batchIndex, fieldKey, val) {
-            const match = batchFormStateUIMap[batchIndex].find(l => l.id === lineId); if (!match) return;
-            if (fieldKey === 'quantity') match.quantity = parseInt(val) || 0;
-            else match[fieldKey] = val.trim();
-            let s = 0; batchFormStateUIMap[batchIndex].forEach(l => s += l.quantity);
-            document.getElementById(`batch-running-label-${batchIndex}`).innerText = s;
-        };
-
-        window.removeLineRowFromLogisticsBatchFormUIPanel = function(lineId, batchIndex) {
-            document.getElementById(`logistics-line-row-${lineId}`).remove();
-            batchFormStateUIMap[batchIndex] = batchFormStateUIMap[batchIndex].filter(l => l.id !== lineId);
-            let s = 0; batchFormStateUIMap[batchIndex].forEach(l => s += l.quantity);
-            document.getElementById(`batch-running-label-${batchIndex}`).innerText = s;
-        };
-
-        function commitLoadingManifestToState() {
-            const date = document.getElementById('load-date').value; const entity = document.getElementById('load-entity').value.trim();
-            if (!date || !entity) { alert("Missing core framework requirements."); return; }
-
-            const compiledBatches = []; let totalTruckGrandPiecesSum = 0;
-            for (let b = 1; b <= TOTAL_COMPARTMENT_LIMIT; b++) {
-                const validRows = batchFormStateUIMap[b].filter(l => l.species && l.size && l.quantity > 0);
-                if (validRows.length > 0) {
-                    let subSum = 0; validRows.forEach(r => subSum += r.quantity);
-                    compiledBatches.push({
-                        batchNumber: b, subTotal: subSum, items: validRows.map(r => ({ species: r.species, size: r.size, quantity: r.quantity }))
-                    });
-                    totalTruckGrandPiecesSum += subSum;
+                if(!specNameInput || !specSizeInput || specQtyValue <= 0) {
+                    inputValidationErrorRaisedFlag = true;
+                    return;
                 }
-            }
-            if (compiledBatches.length === 0) { alert("Manifest allocation lines are blank."); return; }
 
-            db.loadingRecords.unshift({
-                id: "DIS-" + Math.floor(1000 + Math.random() * 9000),
-                companyId: activeTenantSessionToken,
-                date: date, receivingEntity: entity, truckNumber: document.getElementById('load-truck').value.trim(),
-                driverName: document.getElementById('load-driver').value.trim(), overallTotal: totalTruckGrandPiecesSum, batches: compiledBatches, createdAt: new Date().toISOString()
+                integratedCollectionRecordsBufferArray.push({
+                    recordId: 'REC-' + Date.now() + Math.random().toString(36).substring(2, 5).toUpperCase(),
+                    operator: commonOperatorName,
+                    date: commonSessionDate,
+                    species: specNameInput,
+                    size: specSizeInput,
+                    quantity: specQtyValue
+                });
             });
-            document.getElementById('form-loading-manifest').reset(); buildDynamicBatchFormsSkeletonLogistics(); writeDatabaseStatesToLocalStorage(); renderLogisticsManifestLedgerCardsDeck();
+
+            if(inputValidationErrorRaisedFlag || integratedCollectionRecordsBufferArray.length === 0) {
+                alert('Validation Integrity Error: Ensure every session row details matrix parameters includes valid Species names, Dimensions codes specification numbers, and non-zero positive volumetric values.');
+                return;
+            }
+
+            // Push validation cleared structures directly inside memory storage frameworks environments configurations
+            PRODUCTION_DATABASE.push(...integratedCollectionRecordsBufferArray);
+            commitStateToPersistentStorage('TE_PRODUCTION_DB', PRODUCTION_DATABASE);
+
+            alert(`Success: Database synced safely. Committed transaction dataset logs containing [${integratedCollectionRecordsBufferArray.length}] items array elements metrics rows profiles into master storage archives logs records entries safely.`);
+            
+            // Clean transactional session components back to functional baseline standards grids models inputs metrics parameters
+            document.getElementById('prod-operator').value = '';
+            document.getElementById('prod-date').value = '';
+            document.getElementById('production-matrix-rows').innerHTML = '';
+            addProductionMatrixRow();
+            switchView('dashboard');
         }
 
-        function renderLogisticsManifestLedgerCardsDeck() {
-            const container = document.getElementById('dispatch-manifests-ledger-deck'); container.innerHTML = '';
-            const labelsMap = ["1st Batch Total", "2nd Batch Total", "3rd Batch Total"];
-            const scopedLoading = getScopedLoading();
+        /**
+         * =========================================================================
+         * METRICS PRODUCTION ANALYTICS QUERIES PARSER AND REPORT GENERATION MODULE
+         * =========================================================================
+         */
+        function clearAnalyticsFilters() {
+            document.getElementById('analytic-operator-filter').value = '';
+            document.getElementById('analytic-single-date').value = '';
+            document.getElementById('analytic-start-date').value = '';
+            document.getElementById('analytic-end-date').value = '';
+            document.getElementById('analytics-results-container').classList.add('hidden');
+        }
 
-            if (scopedLoading.length === 0) {
-                container.innerHTML = `<div class="bg-white rounded-2xl p-6 text-center border text-slate-400 font-medium text-xs">No matching tenant freight manifests identified.</div>`; return;
+        function executeAnalyticsQuery() {
+            const filterOp    = document.getElementById('analytic-operator-filter').value.trim().toLowerCase();
+            const singleDate  = document.getElementById('analytic-single-date').value;
+            const startDateRange = document.getElementById('analytic-start-date').value;
+            const endDateRange   = document.getElementById('analytic-end-date').value;
+
+            // Pipeline filter execution loops matching logic
+            let parsedFilteredResultsCollection = PRODUCTION_DATABASE.filter(item => {
+                // Operator conditional match filter parameters systems checks checks
+                if(filterOp && !item.operator.toLowerCase().includes(filterOp)) return false;
+                
+                // Date Single analysis routing parameters criteria operations setup overrides
+                if(singleDate && item.date !== singleDate) return false;
+
+                // Date Range analytical validation windows constraints structures setups boundaries parameters checks
+                if(startDateRange && item.date < startDateRange) return false;
+                if(endDateRange && item.date > endDateRange) return false;
+
+                return true;
+            });
+
+            // Calculate cross analytic properties aggregation systems datasets models variables variables arrays
+            let grossAggregatedVolumeUnitsCount = 0;
+            const localSpeciesAggregateDistributionMetricsMap = {};
+            const localSizeAggregateDistributionMetricsMap = {};
+
+            parsedFilteredResultsCollection.forEach(row => {
+                const volCount = parseInt(row.quantity || 0);
+                grossAggregatedVolumeUnitsCount += volCount;
+
+                // Build mapping groupings sets values
+                const spKey = row.species.toUpperCase();
+                const szKey = row.size.toUpperCase();
+
+                localSpeciesAggregateDistributionMetricsMap[spKey] = (localSpeciesAggregateDistributionMetricsMap[spKey] || 0) + volCount;
+                localSizeAggregateDistributionMetricsMap[szKey] = (localSizeAggregateDistributionMetricsMap[szKey] || 0) + volCount;
+            });
+
+            // Set content details views anchors parameters modifications metrics dashboards structures layouts labels text node objects
+            document.getElementById('analytic-card-gross').innerText = parsedFilteredResultsCollection.length + " Rows Linked";
+            document.getElementById('analytic-card-species-cnt').innerText = Object.keys(localSpeciesAggregateDistributionMetricsMap).length + " Profiles";
+            document.getElementById('analytic-card-total').innerText = grossAggregatedVolumeUnitsCount + " Total Pcs";
+
+            // Process rendering breakdowns grids loops structures elements nodes setups canvas tables blocks row items
+            const speciesBreakdownTableBodyAnchorNode = document.getElementById('analytics-species-breakdown-rows');
+            speciesBreakdownTableBodyAnchorNode.innerHTML = '';
+            Object.entries(localSpeciesAggregateDistributionMetricsMap).forEach(([spName, calculatedSumCountValue]) => {
+                speciesBreakdownTableBodyAnchorNode.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 text-slate-700">
+                        <td class="px-4 py-2 font-medium">${spName}</td>
+                        <td class="px-4 py-2 text-right font-bold text-slate-900">${calculatedSumCountValue}</td>
+                    </tr>
+                `);
+            });
+            if(Object.keys(localSpeciesAggregateDistributionMetricsMap).length === 0) {
+                speciesBreakdownTableBodyAnchorNode.innerHTML = `<tr><td colspan="2" class="text-center text-slate-400 text-xs py-4 italic">No matching breakdown aggregations metrics sets records.</td></tr>`;
             }
 
-            scopedLoading.forEach(m => {
-                let dynamicBatchesSubGridHtml = '';
-                m.batches.forEach(b => {
-                    let linesHtml = '';
-                    b.items.forEach(i => {
-                        linesHtml += `<div class="grid-align-table text-[11px] bg-white p-1.5 rounded border border-slate-100">
-                            <span class="font-bold text-slate-800 truncate">${i.species}</span>
-                            <span class="text-center font-mono font-bold text-slate-500 bg-slate-100 rounded px-1 text-[10px]">${i.size}</span>
-                            <span class="text-right font-mono font-black text-slate-900">${i.quantity}</span>
-                            <span></span><span class="grid-hide-col"></span>
-                        </div>`;
-                    });
-                    dynamicBatchesSubGridHtml += `<div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1">
-                        <div class="flex justify-between items-center text-[9px] font-black text-slate-400 font-mono uppercase tracking-wider border-b pb-0.5">
-                            <span>${labelsMap[b.batchNumber - 1]}</span>
-                            <span class="text-amber-600 font-mono font-black">${b.subTotal}</span>
-                        </div>
-                        <div class="space-y-1">${linesHtml}</div>
-                    </div>`;
-                });
+            const sizeBreakdownTableBodyAnchorNode = document.getElementById('analytics-size-breakdown-rows');
+            sizeBreakdownTableBodyAnchorNode.innerHTML = '';
+            Object.entries(localSizeAggregateDistributionMetricsMap).forEach(([szDimensionCode, calculatedSumCountValue]) => {
+                sizeBreakdownTableBodyAnchorNode.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 text-slate-700">
+                        <td class="px-4 py-2 font-medium">${szDimensionCode}</td>
+                        <td class="px-4 py-2 text-right font-bold text-slate-900">${calculatedSumCountValue}</td>
+                    </tr>
+                `);
+            });
+            if(Object.keys(localSizeAggregateDistributionMetricsMap).length === 0) {
+                sizeBreakdownTableBodyAnchorNode.innerHTML = `<tr><td colspan="2" class="text-center text-slate-400 text-xs py-4 italic">No matching size matrix dimensions summary data.</td></tr>`;
+            }
 
-                const card = document.createElement('div'); card.className = "bg-white border border-slate-200 rounded-2xl p-4 md:p-5 custom-shadow space-y-3";
-                card.innerHTML = `
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
-                        <div>
-                            <div class="flex items-center gap-1.5"><span class="text-[9px] font-mono font-bold bg-amber-100 border border-amber-200 text-amber-800 px-1 rounded">${m.id}</span><h5 class="text-xs font-black text-slate-900">Truck: ${m.truckNumber || 'N/A'}</h5></div>
-                        </div>
-                        <div class="flex items-center gap-2 text-right">
-                            <div><span class="text-xs font-black block text-slate-800">${m.date}</span><span class="text-[10px] text-emerald-600 font-bold block">${m.receivingEntity}</span></div>
-                            <button onclick="purgeLoadingManifestRowInstanceFromState('${m.id}')" class="text-slate-300 hover:text-rose-600 transition p-1"><i class="fa-solid fa-trash-alt text-xs"></i></button>
+            // Build detailed raw master logs row tables blocks entries loop injections routines arrays
+            const detailedLogsMasterTableBodyAnchorNode = document.getElementById('analytics-main-records-rows');
+            detailedLogsMasterTableBodyAnchorNode.innerHTML = '';
+            parsedFilteredResultsCollection.forEach(item => {
+                detailedLogsMasterTableBodyAnchorNode.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50/80 transition-colors text-slate-700">
+                        <td class="px-4 py-3 font-medium whitespace-nowrap">${item.date}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-900">${item.operator}</td>
+                        <td class="px-4 py-3"><span class="bg-slate-100 px-2 py-0.5 rounded text-xs font-medium text-slate-800">${item.species}</span></td>
+                        <td class="px-4 py-3 font-mono text-xs">${item.size}</td>
+                        <td class="px-4 py-3 text-right pr-6 font-bold text-slate-900">${item.quantity}</td>
+                    </tr>
+                `);
+            });
+            if(parsedFilteredResultsCollection.length === 0) {
+                detailedLogsMasterTableBodyAnchorNode.innerHTML = `<tr><td colspan="5" class="text-center text-slate-400 text-sm py-12 italic">No records locate query results matching designated filter configuration settings parameters metrics inputs.</td></tr>`;
+            }
+
+            // Make data block visible to operator system frameworks view layouts properties fields models
+            document.getElementById('analytics-results-container').classList.remove('hidden');
+        }
+
+        /**
+         * =========================================================================
+         * QUALITY CONTROL INTERFACE BLOCK: REJECTED WOOD MANAGEMENT REGISTRY MODULE
+         * =========================================================================
+         */
+        function submitRejectionRecord() {
+            const rDate      = document.getElementById('reject-date').value;
+            const rOperator  = document.getElementById('reject-operator').value.trim();
+            const rSpecies   = document.getElementById('reject-species').value.trim();
+            const rSize      = document.getElementById('reject-size').value.trim();
+            const rQty       = parseInt(document.getElementById('reject-qty').value || 0);
+            const rRemarks   = document.getElementById('reject-remarks').value.trim();
+
+            if(!rDate || !rOperator || !rSpecies || !rSize || rQty <= 0) {
+                alert('Validation Integrity Error: Complete all mandatory fields including specific defective quantity calculations units greater than absolute zero bounds.');
+                return;
+            }
+
+            const structuredRejectionLogObject = {
+                rejectionId: 'REJ-' + Date.now(),
+                date: rDate,
+                operator: rOperator,
+                species: rSpecies,
+                size: rSize,
+                quantity: rQty,
+                remarks: rRemarks || 'No defect categorization details provided'
+            };
+
+            REJECTION_DATABASE.push(structuredRejectionLogObject);
+            commitStateToPersistentStorage('TE_REJECTION_DB', REJECTION_DATABASE);
+
+            alert('Success Code Confirmation: Wood rejection incident metrics recorded and locked. Applicable financial deduction values pipelines deployed.');
+            
+            // Clean dynamic parameters fields control nodes values setups forms boundaries
+            document.getElementById('reject-operator').value = '';
+            document.getElementById('reject-species').value = '';
+            document.getElementById('reject-size').value = '';
+            document.getElementById('reject-qty').value = '';
+            document.getElementById('reject-remarks').value = '';
+            
+            renderRejectionLedgerTable();
+        }
+
+        function renderRejectionLedgerTable() {
+            const filterOpVal   = document.getElementById('reject-filter-op').value.trim().toLowerCase();
+            const filterDateVal = document.getElementById('reject-filter-date').value;
+            
+            const targetLedgerTableBodyAnchorNode = document.getElementById('rejection-ledger-rows');
+            targetLedgerTableBodyAnchorNode.innerHTML = '';
+
+            let processedSubsetCollection = REJECTION_DATABASE.filter(r => {
+                if(filterOpVal && !r.operator.toLowerCase().includes(filterOpVal)) return false;
+                if(filterDateVal && r.date !== filterDateVal) return false;
+                return true;
+            });
+
+            processedSubsetCollection.forEach(row => {
+                targetLedgerTableBodyAnchorNode.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-rose-50/20 text-slate-700 transition-colors">
+                        <td class="px-4 py-2.5 whitespace-nowrap text-xs font-medium">${row.date}</td>
+                        <td class="px-4 py-2.5 font-bold text-slate-900">${row.operator}</td>
+                        <td class="px-4 py-2.5 text-xs"><span class="bg-rose-50 border border-rose-100 text-rose-800 px-1.5 py-0.5 rounded font-medium">${row.species}</span></td>
+                        <td class="px-4 py-2.5 font-mono text-xs">${row.size}</td>
+                        <td class="px-4 py-2.5 text-right font-extrabold text-rose-600">${row.quantity}</td>
+                        <td class="px-4 py-2.5 pl-6 text-xs text-slate-500 italic max-w-xs truncate" title="${row.remarks}">${row.remarks}</td>
+                    </tr>
+                `);
+            });
+
+            if(processedSubsetCollection.length === 0) {
+                targetLedgerTableBodyAnchorNode.innerHTML = `<tr><td colspan="6" class="text-center text-slate-400 py-8 text-xs italic">Registry archive ledger ledger currently transparent or empty matching constraints.</td></tr>`;
+            }
+        }
+
+        /**
+         * =========================================================================
+         * OPERATOR FINANCIAL ACCOUNTING AUDIT AND PAYROLL STATEMENT ENGINE CALCULATIONS
+         * =========================================================================
+         */
+        function executeSalaryCalculationPayout() {
+            const targetOpName = document.getElementById('salary-operator').value.trim();
+            const winStart     = document.getElementById('salary-start').value;
+            const winEnd       = document.getElementById('salary-end').value;
+
+            if(!targetOpName || !winStart || !winEnd) {
+                alert('Validation Integrity Error: Supply active Operator profile configurations parameter matching bounds together with target boundary limits timeline periods.');
+                return;
+            }
+
+            // Calculation query aggregation pipelines metrics variables calculations metrics configurations blocks systems
+            let totalGrossAccumulatedVolumeCount = 0;
+            PRODUCTION_DATABASE.forEach(p => {
+                if(p.operator.toLowerCase() === targetOpName.toLowerCase() && p.date >= winStart && p.date <= winEnd) {
+                    totalGrossAccumulatedVolumeCount += parseInt(p.quantity || 0);
+                }
+            });
+
+            let totalDeductedRejectionVolumeCount = 0;
+            REJECTION_DATABASE.forEach(r => {
+                if(r.operator.toLowerCase() === targetOpName.toLowerCase() && r.date >= winStart && r.date <= winEnd) {
+                    totalDeductedRejectionVolumeCount += parseInt(r.quantity || 0);
+                }
+            });
+
+            let coreCalculatedNetProductionBalanceValue = totalGrossAccumulatedVolumeCount - totalDeductedRejectionVolumeCount;
+            if(coreCalculatedNetProductionBalanceValue < 0) coreCalculatedNetProductionBalanceValue = 0; // Prevent downstream negative financial matrix anomalies
+
+            // Compute payroll slip parameters using enterprise business rule formula rules multiplier ₵3 base parameters setups configurations
+            const finalizedFinancialPayableSalarySumAmount = coreCalculatedNetProductionBalanceValue * 3;
+
+            // Mapping outputs data details fields values grids parameters anchors nodes labels text lines structures
+            document.getElementById('salary-meta-date').innerText = new Date().toLocaleDateString();
+            document.getElementById('salary-meta-op').innerText = targetOpName.toUpperCase();
+            
+            document.getElementById('salary-calc-gross').innerText = totalGrossAccumulatedVolumeCount + " Pcs";
+            document.getElementById('salary-calc-reject').innerText = totalDeductedRejectionVolumeCount + " Pcs";
+            document.getElementById('salary-calc-net').innerText = coreCalculatedNetProductionBalanceValue + " Eligible Pcs";
+            document.getElementById('salary-calc-payout').innerText = new Intl.NumberFormat('en-GH', { style: 'currency', currency: 'GHS' }).format(finalizedFinancialPayableSalarySumAmount);
+
+            // Trigger element view panel display state visibility toggles
+            document.getElementById('salary-statement-sheet').classList.remove('hidden');
+        }
+
+        /**
+         * =========================================================================
+         * LOGISTICS BATCH MANAGEMENT SYSTEM STAGING ARCHITECTURE PIPELINE CORES
+         * =========================================================================
+         */
+        function addItemToStagingBatchMemory() {
+            const spInput = document.getElementById('batch-input-species').value.trim();
+            const szInput = document.getElementById('batch-input-size').value.trim();
+            const qtyInput = parseInt(document.getElementById('batch-input-qty').value || 0);
+
+            if(!spInput || !szInput || qtyInput <= 0) {
+                alert('Validation Integrity Error: Ensure individual batch loading items contain structural text profiles specs alongside positive quantities limits.');
+                return;
+            }
+
+            BATCH_ITEMS_STAGING_BUFFER.push({
+                itemUniqueId: 'B-ITEM-' + Date.now() + Math.random().toString(36).substring(2, 5).toUpperCase(),
+                species: spInput,
+                size: szInput,
+                quantity: qtyInput
+            });
+
+            // Clean single subset input form lines parameter nodes metrics setups fields values parameters
+            document.getElementById('batch-input-species').value = '';
+            document.getElementById('batch-input-size').value = '';
+            document.getElementById('batch-input-qty').value = '';
+
+            refreshStagingBufferVisualDisplayList();
+        }
+
+        function refreshStagingBufferVisualDisplayList() {
+            const anchorNode = document.getElementById('batch-items-buffer-display');
+            anchorNode.innerHTML = '';
+
+            if(BATCH_ITEMS_STAGING_BUFFER.length === 0) {
+                anchorNode.innerHTML = `<p class="text-slate-400 italic py-1">Buffer memory arrays empty.</p>`;
+                return;
+            }
+
+            BATCH_ITEMS_STAGING_BUFFER.forEach((item, idx) => {
+                anchorNode.insertAdjacentHTML('beforeend', `
+                    <div class="flex items-center justify-between py-1.5 text-[11px] font-medium text-slate-600">
+                        <span>[${idx + 1}] <strong>${item.species}</strong> - <code class="bg-slate-200 px-0.5 rounded">${item.size}</code></span>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-slate-900">${item.quantity} units</span>
+                            <button type="button" onclick="removeItemFromStagingBufferByIndex(${idx})" class="text-rose-500 hover:text-rose-700 font-bold px-1">X</button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">${dynamicBatchesSubGridHtml}</div>
-                    <div class="flex justify-between items-center pt-2 border-t border-slate-100 text-xs font-bold font-mono">
-                        <span class="text-slate-400 text-[10px] uppercase font-sans font-bold">Overall Manifest Total:</span>
-                        <span class="text-slate-950 font-black text-xs md:text-sm bg-slate-100 px-2.5 py-0.5 rounded">${m.overallTotal} pcs</span>
+                `);
+            });
+        }
+
+        function removeItemFromStagingBufferByIndex(targetIndexKeyLocation) {
+            BATCH_ITEMS_STAGING_BUFFER.splice(targetIndexKeyLocation, 1);
+            refreshStagingBufferVisualDisplayList();
+        }
+
+        function commitFullBatchToDatabase() {
+            const batchNameCode = document.getElementById('batch-name').value.trim();
+            if(!batchNameCode || BATCH_ITEMS_STAGING_BUFFER.length === 0) {
+                alert('Validation Integrity Error: Define recognizable Batch tracking identification metrics codes naming strings alongside minimum one item insertion entry row inside data buffers.');
+                return;
+            }
+
+            // Calculation variables summaries totals counts
+            let batchAggregateTotalVolumeCount = 0;
+            BATCH_ITEMS_STAGING_BUFFER.forEach(i => batchAggregateTotalVolumeCount += i.quantity);
+
+            const completeStagedBatchRecordObject = {
+                batchId: 'BAT-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase(),
+                batchName: batchNameCode,
+                items: [...BATCH_ITEMS_STAGING_BUFFER],
+                totalVolume: batchAggregateTotalVolumeCount,
+                timestamp: new Date().toLocaleString()
+            };
+
+            BATCHES_DATABASE.push(completeStagedBatchRecordObject);
+            commitStateToPersistentStorage('TE_BATCHES_DB', BATCHES_DATABASE);
+
+            alert(`Staging Log Confirmation: Staged allocation tracking lot packaging file [${batchNameCode}] containing total [${batchAggregateTotalVolumeCount}] pieces saved into deployment registers pipelines loops arrays models.`);
+            
+            // Wipe setup parameters clean grids elements controls nodes fields structures configurations systems values setups layouts properties
+            document.getElementById('batch-name').value = '';
+            BATCH_ITEMS_STAGING_BUFFER = [];
+            refreshStagingBufferVisualDisplayList();
+            
+            renderBatchesStackListGridCards();
+        }
+
+        function renderBatchesStackListGridCards() {
+            const masterAnchorNode = document.getElementById('logistics-batches-stack-anchor');
+            masterAnchorNode.innerHTML = '';
+
+            let runningGlobalStagingUnitsCountSum = 0;
+            BATCHES_DATABASE.forEach(batch => runningGlobalStagingUnitsCountSum += parseInt(batch.totalVolume || 0));
+            
+            document.getElementById('batch-global-grand-total').innerText = `${runningGlobalStagingUnitsCountSum} Staged Units Total`;
+            document.getElementById('batch-global-count').innerText = BATCHES_DATABASE.length;
+
+            if(BATCHES_DATABASE.length === 0) {
+                masterAnchorNode.innerHTML = `
+                    <div class="p-8 bg-white border border-slate-200 rounded-xl text-center text-slate-400 text-sm italic">
+                        No logistical inventory batches staged for loading manifest distribution parameters pipelines. Build staging structures via management insertion toolsets fields forms configurations.
                     </div>
                 `;
-                container.appendChild(card);
-            });
-        }
-
-        window.purgeLoadingManifestRowInstanceFromState = function(id) {
-            if(!confirm("Purge historical manifest allocation row?")) return;
-            db.loadingRecords = db.loadingRecords.filter(m => m.id !== id);
-            writeDatabaseStatesToLocalStorage(); renderLogisticsManifestLedgerCardsDeck();
-        };
-
-        function resetAndRebuildSalesTicketCheckoutForm() {
-            salesTicketLineItemsStateArray = []; document.getElementById('sales-ticket-lines-form-wrapper').innerHTML = '';
-            injectRowLineToSalesTicketForm(); renderCommercialSalesTableRows();
-        }
-
-        window.injectRowLineToSalesTicketForm = function() {
-            const lineId = "SLN-" + Math.floor(10000 + Math.random() * 90000);
-            salesTicketLineItemsStateArray.push({ id: lineId, species: '', size: '', quantity: 0, unitPrice: 0, totalPrice: 0 });
-            const row = document.createElement('div'); row.id = `sales-checkout-line-row-${lineId}`; row.className = "grid grid-cols-12 gap-1 items-center border-b border-slate-100 pb-1.5";
-            row.innerHTML = `
-                <div class="col-span-3"><input type="text" list="species-presets" placeholder="Species" oninput="updateSalesLineFormStateMemory('${lineId}', 'species', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs focus:outline-none"></div>
-                <div class="col-span-3"><input type="text" list="size-presets" placeholder="Size" oninput="updateSalesLineFormStateMemory('${lineId}', 'size', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs text-center focus:outline-none"></div>
-                <div class="col-span-2"><input type="number" placeholder="Qty" oninput="updateSalesLineFormStateMemory('${lineId}', 'quantity', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs text-center font-bold focus:outline-none"></div>
-                <div class="col-span-3"><input type="number" placeholder="Price" oninput="updateSalesLineFormStateMemory('${lineId}', 'unitPrice', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded p-1 text-xs font-mono text-right focus:outline-none"></div>
-                <div class="col-span-1 text-center"><button type="button" onclick="removeLineRowFromSalesTicketFormUIPanel('${lineId}')" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-minus-circle"></i></button></div>
-            `;
-            document.getElementById('sales-ticket-lines-form-wrapper').appendChild(row);
-        };
-
-        window.updateSalesLineFormStateMemory = function(lineId, fieldKey, val) {
-            const match = salesTicketLineItemsStateArray.find(l => l.id === lineId); if (!match) return;
-            if (fieldKey === 'quantity' || fieldKey === 'unitPrice') { match[fieldKey] = parseInt(val) || 0; match.totalPrice = match.quantity * match.unitPrice; }
-            else match[fieldKey] = val.trim();
-        };
-
-        window.removeLineRowFromSalesTicketFormUIPanel = function(lineId) {
-            if (salesTicketLineItemsStateArray.length === 1) return;
-            document.getElementById(`sales-checkout-line-row-${lineId}`).remove();
-            salesTicketLineItemsStateArray = salesTicketLineItemsStateArray.filter(l => l.id !== lineId);
-        };
-
-        function commitSalesRecordToState() {
-            const date = document.getElementById('sale-date').value; const customer = document.getElementById('sale-customer').value.trim();
-            if (!date || !customer) { alert("Required input vectors missing."); return; }
-            const validItems = salesTicketLineItemsStateArray.filter(l => l.species && l.size && l.quantity > 0);
-            if (validItems.length === 0) { alert("Invoice breakdown matrix contains empty entries."); return; }
-
-            let combinedTicketFinancialSum = 0; validItems.forEach(i => combinedTicketFinancialSum += i.totalPrice);
-            db.salesRecords.unshift({
-                id: "SAL-" + Math.floor(1000 + Math.random() * 9000), 
-                companyId: activeTenantSessionToken,
-                date: date, customerName: customer, grandTotal: combinedTicketFinancialSum,
-                items: validItems.map(i => ({ species: i.species, size: i.size, quantity: i.quantity, unitPrice: i.unitPrice, totalPrice: i.totalPrice })), createdAt: new Date().toISOString()
-            });
-            document.getElementById('form-sales-ticket').reset(); resetAndRebuildSalesTicketCheckoutForm(); writeDatabaseStatesToLocalStorage();
-        }
-
-        function renderCommercialSalesTableRows() {
-            const hook = document.getElementById('table-sales-rows'); hook.innerHTML = '';
-            getScopedSales().forEach(s => {
-                s.items.forEach(i => {
-                    const tr = document.createElement('div'); tr.className = "grid-align-table py-2 border-b border-slate-100 text-slate-700 hover:bg-slate-50 transition";
-                    tr.innerHTML = `
-                        <div><span class="font-bold text-slate-900 block truncate max-w-[70px] md:max-w-none">${s.customerName}</span><span class="text-[9px] font-mono text-slate-400">${s.date}</span></div>
-                        <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 rounded px-1 py-0.5 text-[10px]">${i.size}</span>
-                        <span class="text-right font-mono text-emerald-600 font-bold">${i.quantity}</span>
-                        <span class="text-right font-mono text-slate-500">${i.totalPrice}</span>
-                        <div class="text-center grid-hide-col"><button onclick="purgeSalesRowInstanceFromState('${s.id}')" class="text-slate-300 hover:text-rose-600 transition"><i class="fa-solid fa-trash-alt"></i></button></div>
-                    `;
-                    hook.appendChild(tr);
-                });
-            });
-        }
-
-        window.purgeSalesRowInstanceFromState = function(id) {
-            if(!confirm("Purge selected financial ledger asset row?")) return;
-            db.salesRecords = db.salesRecords.filter(s => s.id !== id);
-            writeDatabaseStatesToLocalStorage(); renderCommercialSalesTableRows();
-        };
-
-        let activeCompiledDatasetCacheForExport = [];
-
-        window.runCentralReportingFilter = function() {
-            const context = document.getElementById('rep-filter-context').value;
-            const search = document.getElementById('rep-filter-search').value.toLowerCase().trim();
-            const start = document.getElementById('rep-filter-start').value;
-            const end = document.getElementById('rep-filter-end').value;
-            const bodyHook = document.getElementById('report-table-body-hook');
-            const summaryBox = document.getElementById('report-analytic-summary-box');
-
-            bodyHook.innerHTML = ''; summaryBox.innerHTML = ''; activeCompiledDatasetCacheForExport = [];
-
-            if (context === 'production') {
-                document.getElementById('report-output-header-title').innerText = "Production Yield Ledger Records Extraction";
-                let set = getScopedProduction();
-                if (search) set = set.filter(r => r.operatorName.toLowerCase().includes(search) || r.species.toLowerCase().includes(search) || r.size.toLowerCase().includes(search));
-                if (start && end) set = set.filter(r => r.date >= start && r.date <= end);
-
-                activeCompiledDatasetCacheForExport = set.map(r => ({ Date: r.date, Node: r.operatorName, Size: r.size, ActualQty: r.quantity, PayableUnits: r.convertedTotal }));
-
-                let act = 0, pay = 0;
-                set.forEach(r => {
-                    act += r.quantity; pay += r.convertedTotal;
-                    bodyHook.innerHTML += `<div class="grid-align-table py-2 border-b border-slate-100">
-                        <div><p class="font-bold truncate max-w-[70px] md:max-w-none">${r.operatorName}</p><p class="text-[9px] text-slate-400">${r.date}</p></div>
-                        <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">${r.size}</span>
-                        <span class="text-right font-mono text-blue-600 font-black">${r.quantity}</span>
-                        <span class="text-right font-mono text-emerald-600 font-bold">${r.convertedTotal}</span>
-                        <span class="grid-hide-col"></span>
-                    </div>`;
-                });
-                summaryBox.innerHTML = `<div><p class="text-[10px] text-slate-400 uppercase">Compiled Production Volume</p><p class="text-xs md:text-sm font-black">${act} pieces</p></div><div><p class="text-[10px] text-slate-400 uppercase">Compiled Payable Calculations</p><p class="text-xs md:text-sm font-black text-emerald-600">${pay} units</p></div>`;
-            
-            } else if (context === 'loading') {
-                document.getElementById('report-output-header-title').innerText = "Logistics Cargo Dispatch Histories Archive";
-                let set = getScopedLoading();
-                if (search) set = set.filter(m => m.receivingEntity.toLowerCase().includes(search));
-                if (start && end) set = set.filter(m => m.date >= start && m.date <= end);
-
-                let cargoPiecesSum = 0;
-                set.forEach(m => {
-                    m.batches.forEach(b => {
-                        b.items.forEach(i => {
-                            cargoPiecesSum += i.quantity;
-                            activeCompiledDatasetCacheForExport.push({ Date: m.date, Node: m.receivingEntity, Size: i.size, ActualQty: i.quantity, PayableUnits: `Batch ${b.batchNumber}` });
-                            bodyHook.innerHTML += `<div class="grid-align-table py-2 border-b border-slate-100">
-                                <div><p class="font-bold truncate max-w-[70px] md:max-w-none">${m.receivingEntity}</p><p class="text-[9px] text-slate-400">${m.date}</p></div>
-                                <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">${i.size}</span>
-                                <span class="text-right font-mono text-amber-600 font-black">${i.quantity}</span>
-                                <span class="text-right font-mono text-slate-400">B-${b.batchNumber}</span>
-                                <span class="grid-hide-col"></span>
-                            </div>`;
-                        });
-                    });
-                });
-                summaryBox.innerHTML = `<div><p class="text-[10px] text-slate-400 uppercase">Shipping Volume Metric</p><p class="text-xs md:text-sm font-black text-amber-600">${cargoPiecesSum} items</p></div>`;
-
-            } else if (context === 'sales') {
-                document.getElementById('report-output-header-title').innerText = "Commercial Invoice Outflow Ledger Archive";
-                let set = getScopedSales();
-                if (search) set = set.filter(s => s.customerName.toLowerCase().includes(search));
-                if (start && end) set = set.filter(s => s.date >= start && s.date <= end);
-
-                let sumRev = 0;
-                set.forEach(s => {
-                    s.items.forEach(i => {
-                        sumRev += i.totalPrice;
-                        activeCompiledDatasetCacheForExport.push({ Date: s.date, Node: s.customerName, Size: i.size, ActualQty: i.quantity, PayableUnits: i.totalPrice });
-                        bodyHook.innerHTML += `<div class="grid-align-table py-2 border-b border-slate-100">
-                            <div><p class="font-bold truncate max-w-[70px] md:max-w-none">${s.customerName}</p><p class="text-[9px] text-slate-400">${s.date}</p></div>
-                            <span class="text-center font-mono font-bold text-slate-800 bg-slate-100 px-1 py-0.5 rounded text-[10px]">${i.size}</span>
-                            <span class="text-right font-mono text-slate-900 font-bold">${i.quantity}</span>
-                            <span class="text-right font-mono text-emerald-600 font-black">${i.totalPrice}</span>
-                            <span class="grid-hide-col"></span>
-                        </div>`;
-                    });
-                });
-                summaryBox.innerHTML = `<div><p class="text-[10px] text-slate-400 uppercase">Revenue Summary</p><p class="text-xs md:text-sm font-black text-emerald-600">${sumRev}</p></div>`;
+                return;
             }
-        };
 
-        window.triggerFileDownloadCSV = function() {
-            if (activeCompiledDatasetCacheForExport.length === 0) { alert("Selection contains no transactional rows."); return; }
-            const context = document.getElementById('rep-filter-context').value;
-            let titleString = context === 'production' ? "Production Yield Ledger Records Extraction" : "TimberMatrix Export";
+            BATCHES_DATABASE.forEach((batch, bIdx) => {
+                let nestedRowsMarkupStringHTML = '';
+                batch.items.forEach(item => {
+                    nestedRowsMarkupStringHTML += `
+                        <tr class="text-xs border-b border-slate-100 text-slate-600 hover:bg-slate-50/50">
+                            <td class="px-3 py-1.5 font-medium">${item.species}</td>
+                            <td class="px-3 py-1.5 font-mono">${item.size}</td>
+                            <td class="px-3 py-1.5 text-right font-bold text-slate-900">${item.quantity}</td>
+                        </tr>
+                    `;
+                });
+
+                const batchCardMarkupNodeStringHTML = `
+                    <div class="p-5 bg-white border border-slate-200 rounded-xl shadow-xs space-y-3 relative">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <div>
+                                <h4 class="text-sm font-black text-slate-900 tracking-tight"><i class="fa-solid fa-box text-amber-600 mr-2"></i>${batch.batchName}</h4>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">Staged System Log Clock: ${batch.timestamp}</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xs font-extrabold bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">Batch Total: ${batch.totalVolume} Pcs</span>
+                                <button type="button" onclick="purgeStagedBatchFromMemoryDatabaseByIndex(${bIdx})" class="text-slate-300 hover:text-rose-600 p-1 transition-colors text-xs" title="Purge Batch from Registers"><i class="fa-solid fa-trash-can"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto rounded-lg border border-slate-100 bg-slate-50/30">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="bg-slate-100/50 border-b border-slate-200 font-semibold text-slate-500">
+                                        <th class="px-3 py-1.5">Species Specifications</th>
+                                        <th class="px-3 py-1.5">Dimension specs</th>
+                                        <th class="px-3 py-1.5 text-right w-24">Loaded Units</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${nestedRowsMarkupStringHTML}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                masterAnchorNode.insertAdjacentHTML('beforeend', batchCardMarkupNodeStringHTML);
+            });
+        }
+
+        function purgeStagedBatchFromMemoryDatabaseByIndex(targetIdxKeyLocation) {
+            if(confirm('Logistics Authorization Check: Purge dynamic staged structural logging inventory batch from local tracking frameworks systems repositories records loops parameters?')) {
+                BATCHES_DATABASE.splice(targetIdxKeyLocation, 1);
+                commitStateToPersistentStorage('TE_BATCHES_DB', BATCHES_DATABASE);
+                renderBatchesStackListGridCards();
+            }
+        }
+
+        // Run bootstrapping invocation triggers configurations rendering maps frameworks parameters
+        renderBatchesStackListGridCards();
+
+        /**
+         * =========================================================================
+         * FREIGHT WAYBILL EXECUTION GENERATIONS AND LOGISTICS DISPATCH TRACKING DECKS
+         * =========================================================================
+         */
+        function executeFreightWaybillDispatch() {
+            const vPlate    = document.getElementById('dispatch-vehicle').value.trim();
+            const dDriver   = document.getElementById('dispatch-driver').value.trim();
+            const dDest     = document.getElementById('dispatch-destination').value.trim();
+            const dRemarks  = document.getElementById('dispatch-remarks').value.trim() || 'Status Normal Transit Execution';
+
+            if(!vPlate || !dDriver || !dDest) {
+                alert('Validation Integrity Error: Complete missing fleet logistics deployment parameters parameters fields inputs to execute freight waybill.');
+                return;
+            }
+
+            if(BATCHES_DATABASE.length === 0) {
+                alert('Logistics Routing Fault: Staging pipeline empty. Unable to execute freight waybill dispatch operations without active allocations.');
+                return;
+            }
+
+            // Calculations mapping allocations tracking counts parameters
+            let globalManifestCargoAccumulatedSumCount = 0;
+            BATCHES_DATABASE.forEach(b => globalManifestCargoAccumulatedSumCount += parseInt(b.totalVolume || 0));
+
+            const trackingUniqueDispatchIdKeyString = 'DISP-' + Date.now().toString().substring(3, 9) + '-' + Math.random().toString(36).substring(2, 5).toUpperCase();
+            const generationClockStringTimestamp    = new Date().toLocaleString();
+
+            const completeWaybillDispatchRecordManifestObject = {
+                dispatchId: trackingUniqueDispatchIdKeyString,
+                date: generationClockStringTimestamp,
+                vehicle: vPlate,
+                driver: dDriver,
+                destination: dDest,
+                remarks: dRemarks,
+                totalVolume: globalManifestCargoAccumulatedSumCount,
+                stagedSnapshotCargoPayload: [...BATCHES_DATABASE] // Deep clone current active layout snapshot metrics profiles parameters
+            };
+
+            // Inject records directly inside master datasets archives logs
+            DISPATCHES_DATABASE.push(completeWaybillDispatchRecordManifestObject);
+            commitStateToPersistentStorage('TE_DISPATCHES_DB', DISPATCHES_DATABASE);
+
+            // Populate invoice layout canvas ticket nodes components fields values text labels mappings strings
+            document.getElementById('ticket-dispatch-id').innerText = trackingUniqueDispatchIdKeyString;
+            document.getElementById('ticket-date').innerText = generationClockStringTimestamp;
+            document.getElementById('ticket-grand-total').innerText = globalManifestCargoAccumulatedSumCount + " Pcs Total";
+            document.getElementById('ticket-vehicle').innerText = vPlate.toUpperCase();
+            document.getElementById('ticket-driver').innerText = dDriver;
+            document.getElementById('ticket-destination').innerText = dDest;
+            document.getElementById('ticket-remarks').innerText = dRemarks;
+
+            // Ingest rows mapping loops tables metrics configurations arrays blocks schemas elements parameters
+            const ticketCargoTableBodyAnchorNode = document.getElementById('ticket-cargo-rows');
+            ticketCargoTableBodyAnchorNode.innerHTML = '';
+
+            BATCHES_DATABASE.forEach(batch => {
+                batch.items.forEach(item => {
+                    ticketCargoTableBodyAnchorNode.insertAdjacentHTML('beforeend', `
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-4 py-2 font-bold text-slate-900">${batch.batchName}</td>
+                            <td class="px-4 py-2 text-xs"><span class="bg-slate-100 px-2 py-0.5 rounded text-slate-800 font-medium">${item.species}</span></td>
+                            <td class="px-4 py-2 font-mono text-xs">${item.size}</td>
+                            <td class="px-4 py-2 text-right pr-6 font-extrabold text-slate-900">${item.quantity}</td>
+                        </tr>
+                    `);
+                });
+            });
+
+            // Make live printable invoice element visible to operator dashboard view layouts
+            document.getElementById('dispatch-waybill-manifest-ticket').classList.remove('hidden');
+
+            alert(`Freight Waybill Dispatched: Waybill document generated and locked against editing. Cleared [${BATCHES_DATABASE.length}] batches from active staging inventory.`);
+
+            // Empty live active logistics memory databases queues parameters variables states systems loops arrays
+            BATCHES_DATABASE = [];
+            commitStateToPersistentStorage('TE_BATCHES_DB', BATCHES_DATABASE);
             
-            let csvStr = `"${titleString}"\n\nDate,IdentifierNode,Wood_Size,Actual_Quantity,Extension_Units\n`;
-            activeCompiledDatasetCacheForExport.forEach(r => { csvStr += `"${r.Date}","${r.Node}","${r.Size}",${r.ActualQty},"${r.PayableUnits}"\n`; });
+            // Clean forms setup parameters fields components fields values setups properties controls structures configurations
+            document.getElementById('dispatch-vehicle').value = '';
+            document.getElementById('dispatch-driver').value = '';
+            document.getElementById('dispatch-destination').value = '';
+            document.getElementById('dispatch-remarks').value = '';
+
+            // Run updates refreshes views across interconnected structural architectures dashboard elements panels layouts
+            renderBatchesStackListGridCards();
+            renderWaybillMasterDeckTable();
+        }
+
+        function renderWaybillMasterDeckTable() {
+            const anchorTableBodyNode = document.getElementById('dispatch-master-deck-rows');
+            anchorTableBodyNode.innerHTML = '';
+
+            // Reverse matching sequence sorting mapping patterns to process newest metrics histories outputs entries rows lines loops parameters
+            let reversedChronologicalHistoricalCollection = [...DISPATCHES_DATABASE].reverse();
+
+            reversedChronologicalHistoricalCollection.forEach(manifest => {
+                anchorTableBodyNode.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50 text-slate-700 transition-colors">
+                        <td class="px-4 py-3 font-mono font-bold text-amber-600 whitespace-nowrap">${manifest.dispatchId}</td>
+                        <td class="px-4 py-3 text-xs whitespace-nowrap">${manifest.date}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-900 whitespace-nowrap">${manifest.vehicle.toUpperCase()}</td>
+                        <td class="px-4 py-3 text-xs font-medium">${manifest.driver}</td>
+                        <td class="px-4 py-3 text-xs max-w-xs truncate" title="${manifest.destination}">${manifest.destination}</td>
+                        <td class="px-4 py-3 text-right pr-6 font-black text-slate-900">${manifest.totalVolume}</td>
+                    </tr>
+                `);
+            });
+
+            if(reversedChronologicalHistoricalCollection.length === 0) {
+                anchorTableBodyNode.innerHTML = `<tr><td colspan="6" class="text-center text-slate-400 py-12 text-sm italic">Master logistics deck fleet tracking data ledger history transparent or empty.</td></tr>`;
+            }
+        }
+
+        /**
+         * =========================================================================
+         * DATA TRANSFER INFRASTRUCTURE PORTABILITY CHANNELS: EXPORT AND IMPORT SYNC
+         * =========================================================================
+         */
+        function triggerSystemDataDownload(formatExtensionTypeCodeStringKey) {
+            const dateFilterConstraintValue = document.getElementById('export-filter-date').value;
             
-            const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-            a.setAttribute('download', `Tenant_Extract_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        };
+            // Create structural integrated unified object layout template containing application system state mappings definitions properties loops properties parameters
+            let statePackageSchemaObject = {
+                productionDatabase: [...PRODUCTION_DATABASE],
+                rejectionDatabase: [...REJECTION_DATABASE],
+                batchesDatabase: [...BATCHES_DATABASE],
+                dispatchesDatabase: [...DISPATCHES_DATABASE],
+                exportMetadata: {
+                    generatedClockClock: new Date().toLocaleString(),
+                    systemEngineTargetSignature: 'TIMBERTECH-ECOSYSTEM-SYNC-DATA-BUNDLE-v2.1',
+                    filterParameterAppliedValue: dateFilterConstraintValue || 'Global-Full-History-Dump'
+                }
+            };
+
+            // If active date filtration value strings properties criteria elements selected, alter subsets elements data rows lines filters pipelines layouts variables properties parameters variables structures arrays structures fields models
+            if(dateFilterConstraintValue) {
+                statePackageSchemaObject.productionDatabase = statePackageSchemaObject.productionDatabase.filter(p => p.date === dateFilterConstraintValue);
+                statePackageSchemaObject.rejectionDatabase  = statePackageSchemaObject.rejectionDatabase.filter(r => r.date === dateFilterConstraintValue);
+                // Batches and Dispatches items filtering checks dependencies hooks structures layouts configurations systems fields
+            }
+
+            if(formatExtensionTypeCodeStringKey === 'json') {
+                const serializationStringJSONDataStream = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(statePackageSchemaObject, null, 2));
+                const virtualAnchorElementDownloadNode  = document.createElement('a');
+                virtualAnchorElementDownloadNode.setAttribute("href", serializationStringJSONDataStream);
+                virtualAnchorElementDownloadNode.setAttribute("download", `TIMBERTECH_SYSTEM_BACKUP_SYNC_${dateFilterConstraintValue || 'FULL'}.json`);
+                document.body.appendChild(virtualAnchorElementDownloadNode);
+                virtualAnchorElementDownloadNode.click();
+                virtualAnchorElementDownloadNode.remove();
+            } else if(formatExtensionTypeCodeStringKey === 'excel') {
+                // Build robust standardized raw comma-delimited tabular string formats dataset manifest for Excel tabular conversions operations layouts models text nodes fields
+                let flatTabularCsvContentStringStream = "data:text/csv;charset=utf-8,";
+                flatTabularCsvContentStringStream += "RECORD TYPE,DATE/TIMESTAMP,OPERATOR/IDENTIFIER,SPECIES,SIZE/DIMENSION,QUANTITY,REMARKS/DESTINATION\n";
+                
+                statePackageSchemaObject.productionDatabase.forEach(p => {
+                    flatTabularCsvContentStringStream += `PRODUCTION_ENTRY,${p.date},"${p.operator}","${p.species}",${p.size},${p.quantity},N/A\n`;
+                });
+                statePackageSchemaObject.rejectionDatabase.forEach(r => {
+                    flatTabularCsvContentStringStream += `QUALITY_REJECTION,${r.date},"${r.operator}","${r.species}",${r.size},${r.quantity},"${r.remarks}"\n`;
+                });
+                statePackageSchemaObject.dispatchesDatabase.forEach(d => {
+                    flatTabularCsvContentStringStream += `FLEET_DISPATCH,"${d.date}",${d.vehicle},N/A,N/A,${d.totalVolume},"${d.destination}"\n`;
+                });
+
+                const virtualAnchorElementDownloadNodeExcel = document.createElement('a');
+                virtualAnchorElementDownloadNodeExcel.setAttribute("href", encodeURI(flatTabularCsvContentStringStream));
+                virtualAnchorElementDownloadNodeExcel.setAttribute("download", `TIMBERTECH_TABULAR_REPORT_${dateFilterConstraintValue || 'FULL'}.csv`);
+                document.body.appendChild(virtualAnchorElementDownloadNodeExcel);
+                virtualAnchorElementDownloadNodeExcel.click();
+                virtualAnchorElementDownloadNodeExcel.remove();
+            }
+        }
+
+        function processImportedFilePayload() {
+            const fileInputNodeElement = document.getElementById('import-file-node');
+            if(!fileInputNodeElement.files || fileInputNodeElement.files.length === 0) return;
+
+            const selectedFileTargetObjectBlob = fileInputNodeElement.files[0];
+            const fileReaderStreamPipelineInstance = new FileReader();
+            
+            fileReaderStreamPipelineInstance.onload = function(eventResultStreamData) {
+                try {
+                    const parsedJsonSchemaObjectData = JSON.parse(eventResultStreamData.target.result);
+                    
+                    // Structural integrity signature validation check framework algorithms processes setups fields lines components views
+                    if(!parsedJsonSchemaObjectData.exportMetadata || !parsedJsonSchemaObjectData.productionDatabase) {
+                        alert('Ecosystem Integration Error: The selected JSON target file structural properties arrays matches an unrecognized schema signature framework format.');
+                        return;
+                    }
+
+                    PARSED_IMPORT_SANDBOX_OBJECT = parsedJsonSchemaObjectData;
+
+                    // Populate informational view report labels values parameters elements text layouts numbers counts tracking models grids metrics properties setup
+                    document.getElementById('import-preview-prod-cnt').innerText = parsedJsonSchemaObjectData.productionDatabase.length + " Items";
+                    document.getElementById('import-preview-reject-cnt').innerText = (parsedJsonSchemaObjectData.rejectionDatabase || []).length + " Rows";
+                    document.getElementById('import-preview-batch-cnt').innerText = (parsedJsonSchemaObjectData.batchesDatabase || []).length + " Lots";
+                    document.getElementById('import-preview-dispatch-cnt').innerText = (parsedJsonSchemaObjectData.dispatchesDatabase || []).length + " Manifests";
+
+                    // Reveal confirmation utility sandbox block layout controls panels displays dashboards states parameters fields
+                    document.getElementById('import-preview-canvas').classList.remove('hidden');
+
+                } catch (jsonParsingExceptionErrorNode) {
+                    alert('System Core Parsing Error: Unable to safely serialize or read file payload parameters stream. Verify format syntax correctness guidelines configurations rules.');
+                }
+            };
+
+            fileReaderStreamPipelineInstance.readAsText(selectedFileTargetObjectBlob);
+        }
+
+        function commitSandboxPreviewToLiveDatabase() {
+            if(!PARSED_IMPORT_SANDBOX_OBJECT) return;
+
+            let duplicatedCollisionSkipsCounter = 0;
+            let newlyMergedRecordsCounter = 0;
+
+            // De-duplication collision protection implementation engine layout matrix loop systems operations logic:
+            // Creates functional signature map index using compound alphanumeric composite identifiers arrays parameters
+            const baselineExistingProductionCompositeKeysSetMap = new Set(PRODUCTION_DATABASE.map(p => `${p.date}_${p.operator.toLowerCase()}_${p.species.toLowerCase()}_${p.size.toLowerCase()}_${p.quantity}`));
+
+            if(PARSED_IMPORT_SANDBOX_OBJECT.productionDatabase && PARSED_IMPORT_SANDBOX_OBJECT.productionDatabase.length > 0) {
+                PARSED_IMPORT_SANDBOX_OBJECT.productionDatabase.forEach(importedItemRow => {
+                    const trackingRowCompositeSignatureKeyString = `${importedItemRow.date}_${importedItemRow.operator.toLowerCase()}_${importedItemRow.species.toLowerCase()}_${importedItemRow.size.toLowerCase()}_${importedItemRow.quantity}`;
+                    
+                    if(baselineExistingProductionCompositeKeysSetMap.has(trackingRowCompositeSignatureKeyString)) {
+                        duplicatedCollisionSkipsCounter++;
+                    } else {
+                        PRODUCTION_DATABASE.push(importedItemRow);
+                        newlyMergedRecordsCounter++;
+                    }
+                });
+            }
+
+            // Fallback structural loops ingestion attachments for nested elements data systems repositories arrays parameters fields variables layouts structures checks frameworks configurations systems components elements setups
+            if(PARSED_IMPORT_SANDBOX_OBJECT.rejectionDatabase) {
+                PARSED_IMPORT_SANDBOX_OBJECT.rejectionDatabase.forEach(rej => {
+                    if(!REJECTION_DATABASE.some(curr => curr.rejectionId === rej.rejectionId)) REJECTION_DATABASE.push(rej);
+                });
+            }
+            if(PARSED_IMPORT_SANDBOX_OBJECT.batchesDatabase) {
+                PARSED_IMPORT_SANDBOX_OBJECT.batchesDatabase.forEach(bat => {
+                    if(!BATCHES_DATABASE.some(curr => curr.batchId === bat.batchId)) BATCHES_DATABASE.push(bat);
+                });
+            }
+            if(PARSED_IMPORT_SANDBOX_OBJECT.dispatchesDatabase) {
+                PARSED_IMPORT_SANDBOX_OBJECT.dispatchesDatabase.forEach(disp => {
+                    if(!DISPATCHES_DATABASE.some(curr => curr.dispatchId === disp.dispatchId)) DISPATCHES_DATABASE.push(disp);
+                });
+            }
+
+            // Save unified master persistent memory maps structures components fields frameworks setups parameters variables environments pipelines configurations data values levels models dashboards layout elements parameters
+            commitStateToPersistentStorage('TE_PRODUCTION_DB', PRODUCTION_DATABASE);
+            commitStateToPersistentStorage('TE_REJECTION_DB', REJECTION_DATABASE);
+            commitStateToPersistentStorage('TE_BATCHES_DB', BATCHES_DATABASE);
+            commitStateToPersistentStorage('TE_DISPATCHES_DB', DISPATCHES_DATABASE);
+
+            alert(`Conflict Resolving Ingestion Synchronization Terminated: Merging routines processed successfully.\n\n- Safely Integrated New Entries: [${newlyMergedRecordsCounter}]\n- Collided Duplications Dropped (Skipped Safeguards Protection): [${duplicatedCollisionSkipsCounter}]`);
+            
+            // Clean dynamic parameters fields control elements layout models values views panels anchors
+            PARSED_IMPORT_SANDBOX_OBJECT = null;
+            document.getElementById('import-file-node').value = '';
+            document.getElementById('import-preview-canvas').classList.add('hidden');
+            
+            // Sync dashboard widgets panels states mappings layout configurations systems components properties values frameworks elements parameters variables environments metrics dashboards properties setups
+            synchronizeDashboardStatisticsWidgets();
+            renderBatchesStackListGridCards();
+            switchView('dashboard');
+        }
     </script>
 </body>
 </html>
