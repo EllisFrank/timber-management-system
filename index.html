@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timber Operations Enterprise Platform</title>
+    <title>JOADDAI COMPANY — Operations</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,25 +41,17 @@
             <div>
                 <div class="flex items-center justify-between px-6 py-5 bg-slate-950">
                     <div class="flex items-center space-x-3">
-                        <div class="flex items-center justify-center w-8 h-8 bg-amber-600 rounded-lg text-white">
-                            <i class="fa-solid fa-tree text-sm"></i>
+                            <div class="flex items-center justify-center w-8 h-8 bg-amber-600 rounded-lg text-white">
+                                <i class="fa-solid fa-user text-sm"></i>
+                            </div>
+                            <span class="text-base font-bold tracking-wider text-white">JOADDAI  COMPANY</span>
                         </div>
-                        <span class="text-base font-bold tracking-wider text-white">TIMBERTECH</span>
-                    </div>
                     <button onclick="toggleMobileMenu()" class="text-slate-400 hover:text-white md:hidden">
                         <i class="fa-solid fa-xmark text-xl"></i>
                     </button>
                 </div>
 
-                <div class="flex items-center px-6 py-4 space-x-3 bg-slate-900/50 border-b border-slate-800">
-                    <div class="relative w-10 h-10 overflow-hidden bg-amber-700 rounded-full flex items-center justify-center text-white font-semibold">
-                        KK
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-semibold text-white leading-tight">Kwame K.</h4>
-                        <span class="inline-flex items-center px-2 py-0.5 mt-1 text-xs font-medium text-amber-400 bg-amber-400/10 rounded-full">Yard Supervisor</span>
-                    </div>
-                </div>
+                <!-- Sidebar profile removed as requested -->
 
                 <nav class="px-3 py-4 space-y-1">
                     <p class="px-3 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Core</p>
@@ -1485,9 +1477,9 @@
                 rejectionDatabase: [...REJECTION_DATABASE],
                 batchesDatabase: [...BATCHES_DATABASE],
                 dispatchesDatabase: [...DISPATCHES_DATABASE],
-                exportMetadata: {
+                    exportMetadata: {
                     generatedClockClock: new Date().toLocaleString(),
-                    systemEngineTargetSignature: 'TIMBERTECH-ECOSYSTEM-SYNC-DATA-BUNDLE-v2.1',
+                    systemEngineTargetSignature: 'JOADDAI-ECOSYSTEM-SYNC-DATA-BUNDLE-v2.1',
                     filterParameterAppliedValue: dateFilterConstraintValue || 'Global-Full-History-Dump'
                 }
             };
@@ -1503,7 +1495,7 @@
                 const serializationStringJSONDataStream = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(statePackageSchemaObject, null, 2));
                 const virtualAnchorElementDownloadNode  = document.createElement('a');
                 virtualAnchorElementDownloadNode.setAttribute("href", serializationStringJSONDataStream);
-                virtualAnchorElementDownloadNode.setAttribute("download", `TIMBERTECH_SYSTEM_BACKUP_SYNC_${dateFilterConstraintValue || 'FULL'}.json`);
+                virtualAnchorElementDownloadNode.setAttribute("download", `JOADDAI_SYSTEM_BACKUP_SYNC_${dateFilterConstraintValue || 'FULL'}.json`);
                 document.body.appendChild(virtualAnchorElementDownloadNode);
                 virtualAnchorElementDownloadNode.click();
                 virtualAnchorElementDownloadNode.remove();
@@ -1524,7 +1516,7 @@
 
                 const virtualAnchorElementDownloadNodeExcel = document.createElement('a');
                 virtualAnchorElementDownloadNodeExcel.setAttribute("href", encodeURI(flatTabularCsvContentStringStream));
-                virtualAnchorElementDownloadNodeExcel.setAttribute("download", `TIMBERTECH_TABULAR_REPORT_${dateFilterConstraintValue || 'FULL'}.csv`);
+                virtualAnchorElementDownloadNodeExcel.setAttribute("download", `JOADDAI_TABULAR_REPORT_${dateFilterConstraintValue || 'FULL'}.csv`);
                 document.body.appendChild(virtualAnchorElementDownloadNodeExcel);
                 virtualAnchorElementDownloadNodeExcel.click();
                 virtualAnchorElementDownloadNodeExcel.remove();
