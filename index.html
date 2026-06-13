@@ -1029,12 +1029,18 @@
         }
 
         function initializeDateInputs() {
-            const todayStr = "2026-06-11";
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+            const monthStartStr = `${year}-${month}-01`;
+            
             document.getElementById('prod-date').value = todayStr;
             document.getElementById('sale-date').value = todayStr;
             document.getElementById('load-date').value = todayStr;
             document.getElementById('reject-date').value = todayStr;
-            document.getElementById('salary-start-date').value = "2026-06-01";
+            document.getElementById('salary-start-date').value = monthStartStr;
             document.getElementById('salary-end-date').value = todayStr;
         }
 
@@ -1062,8 +1068,18 @@
 
         // --- MODULE A: REAL-TIME ANALYTICS METRICS DASHBOARD AGGREGATORS ---
         function refreshAllDashboardStatistics() {
-            const todayStr = "2026-06-11";
-            const currentMonthPrefix = "2026-06";
+            // Get current system date and time dynamically
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
+            const currentMonthPrefix = `${year}-${month}`;
+
+            // Update live clock display with formatted current date
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('live-clock').innerText = formattedDate;
 
             // 1. Total production quantity volume executed today
             let prodTodayCount = db_production
@@ -1153,7 +1169,20 @@
             if (formatType === 'excel') {
                 let csvRowsContentData = [];
                 csvRowsContentData.push(["JOADDAI CO. LTD - ENTERPRISE OPERATIONS EXECUTIVE REPORT SUMMARY"]);
-                csvRowsContentData.push(["Report Extraction Time Frame Stamp:", "2026-06-11 14:11:36 GMT"]);
+                
+                // Get current system timestamp
+                const now = new Date();
+                const timestamp = now.toLocaleString('en-GB', { 
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                    timeZone: 'UTC'
+                }) + ' GMT';
+                csvRowsContentData.push(["Report Extraction Time Frame Stamp:", timestamp]);
                 csvRowsContentData.push([]);
                 csvRowsContentData.push(["Operational KPIs Key Performance Parameter Metrics Indicator Name", "Aggregated Numerical Value Stat Record"]);
                 csvRowsContentData.push(["Total Physical Volume Produced (Today Scope)", document.getElementById('stat-prod-today').innerText]);
