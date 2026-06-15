@@ -30,12 +30,36 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        html, body {
+            min-width: 0;
+            width: 100%;
+        }
+
+        img, svg, picture {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .main-content, .view-container, .panel, .card, .modal-content {
+            min-width: 0;
+        }
+
+        button, input, select, textarea {
+            min-width: 0;
+        }
+
+        * {
+            overflow-wrap: anywhere;
+            word-wrap: break-word;
+        }
+
         body {
             background-color: var(--bg-main);
             color: var(--text-dark);
             display: flex;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            height: auto;
+            overflow-x: hidden;
         }
 
         /* --- SIDEBAR NAVIGATION --- */
@@ -340,11 +364,14 @@
         /* --- DATA TABLES --- */
         .table-responsive {
             width: 100%;
+            max-width: 100%;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
+            min-width: 100%;
             border-collapse: collapse;
             text-align: left;
             font-size: 0.9rem;
@@ -356,12 +383,22 @@
             padding: 14px 16px;
             font-weight: 600;
             border-bottom: 2px solid var(--border-color);
+            overflow-wrap: anywhere;
+            word-wrap: break-word;
         }
 
         td {
             padding: 14px 16px;
             border-bottom: 1px solid var(--border-color);
             color: #2d3748;
+            overflow-wrap: anywhere;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .actions-cell {
+            white-space: nowrap;
+            text-align: center;
         }
 
         tr:hover td {
@@ -392,6 +429,14 @@
         .status-badge {
             padding: 4px 8px;
             border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
@@ -498,6 +543,23 @@
             overflow-y: auto;
             padding: 25px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #print-export-container, #print-export-container * {
+                visibility: visible !important;
+            }
+            #print-export-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                background: white;
+            }
         }
 
         /* --- MOBILE RESPONSIVE DESIGN --- */
@@ -907,29 +969,29 @@
                     </div>
                     <div class="card-grid">
                         <div class="card">
-                            <div class="card-title">Production Physical Volume (Today)</div>
-                            <div class="card-value" id="stat-prod-today">0 pcs</div>
+                            <div class="card-title">Total Production</div>
+                            <div class="card-value" id="stat-total-production">0 pcs</div>
                             <i class="fa-solid fa-layer-group card-icon"></i>
                         </div>
                         <div class="card">
-                            <div class="card-title">Rejected Timber Volume</div>
-                            <div class="card-value" id="stat-reject-total" style="color: var(--danger);">0 pcs</div>
-                            <i class="fa-solid fa-circle-xmark card-icon"></i>
+                            <div class="card-title">Total Sales</div>
+                            <div class="card-value" id="stat-total-sales">0 pcs</div>
+                            <i class="fa-solid fa-cart-shopping card-icon"></i>
                         </div>
                         <div class="card">
-                            <div class="card-title">Operational Active Batches</div>
-                            <div class="card-value" id="stat-active-batches">0 Units</div>
-                            <i class="fa-solid fa-boxes-stacked card-icon"></i>
-                        </div>
-                        <div class="card">
-                            <div class="card-title">Dispatched Logistic Volume</div>
-                            <div class="card-value" id="stat-loaded-volume">0 pcs</div>
+                            <div class="card-title">Total Loaded Volume</div>
+                            <div class="card-value" id="stat-total-loaded-volume">0 pcs</div>
                             <i class="fa-solid fa-truck-moving card-icon"></i>
                         </div>
                         <div class="card">
-                            <div class="card-title">Monthly Accumulated Yield</div>
-                            <div class="card-value" id="stat-monthly-total">0 pcs</div>
-                            <i class="fa-solid fa-calendar-check card-icon"></i>
+                            <div class="card-title">Total Rejected Volume</div>
+                            <div class="card-value" id="stat-total-rejected-volume" style="color: var(--danger);">0 pcs</div>
+                            <i class="fa-solid fa-circle-xmark card-icon"></i>
+                        </div>
+                        <div class="card" style="border: 2px solid var(--accent);">
+                            <div class="card-title">Current Wood on Ground</div>
+                            <div class="card-value" id="stat-current-wood-on-ground" style="color: var(--success);">0 pcs</div>
+                            <i class="fa-solid fa-warehouse card-icon"></i>
                         </div>
                         <div class="card">
                             <div class="card-title">Net Operational Yield Rate</div>
@@ -1003,6 +1065,15 @@
                             <tbody id="production-table-body"></tbody>
                         </table>
                     </div>
+                    <div id="production-summary-panel" class="panel" style="margin-top: 18px;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fa-solid fa-chart-simple"></i> Production Summary</span>
+                        </div>
+                        <div id="production-summary-content" style="display:flex; flex-direction:column; gap:10px; font-size:0.95rem; color:#2d3748;">
+                            <div>Total Physical Output (Qty): 0 pcs</div>
+                            <div>Total Financial Base (Payable): 0 Units</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1037,6 +1108,7 @@
                         <span class="panel-title"><i class="fa-solid fa-receipt"></i> Processed Financial Compensation Statements</span>
                         <div class="panel-actions">
                             <button class="btn btn-pdf" onclick="exportSalary('pdf')"><i class="fa-solid fa-file-pdf"></i> Export Pay Slip</button>
+                            <button class="btn btn-excel" onclick="exportSalary('excel')"><i class="fa-solid fa-file-excel"></i> Export CSV</button>
                         </div>
                     </div>
                     <div class="card-grid">
@@ -1055,6 +1127,86 @@
                         <div class="card">
                             <div class="card-title">Net Operator Salary (GHS)</div>
                             <div class="card-value" id="sal-stat-net-pay" style="color: var(--success);">GH₵ 0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-top: 20px;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fa-solid fa-filter"></i> Compensation History Filters</span>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Filter by Operator</label>
+                                <input type="text" id="comp-filter-operator" class="form-control" placeholder="Operator name..." oninput="renderCompensationTable()">
+                            </div>
+                            <div class="form-group">
+                                <label>Filter by Month</label>
+                                <select id="comp-filter-month" class="form-control" onchange="renderCompensationTable()">
+                                    <option value="">All Months</option>
+                                    <option value="01">January</option>
+                                    <option value="02">February</option>
+                                    <option value="03">March</option>
+                                    <option value="04">April</option>
+                                    <option value="05">May</option>
+                                    <option value="06">June</option>
+                                    <option value="07">July</option>
+                                    <option value="08">August</option>
+                                    <option value="09">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Filter by Year</label>
+                                <input type="number" id="comp-filter-year" class="form-control" placeholder="2026" onchange="renderCompensationTable()" min="2020" max="2050">
+                            </div>
+                            <div class="form-group">
+                                <label>Filter by Payment Status</label>
+                                <select id="comp-filter-status" class="form-control" onchange="renderCompensationTable()">
+                                    <option value="">All Statuses</option>
+                                    <option value="paid">Paid</option>
+                                    <option value="unpaid">Unpaid</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-top: 20px;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fa-solid fa-table"></i> Compensation Statements History</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Operator Name</th>
+                                        <th>Processing Period</th>
+                                        <th>Physical Output (Pcs)</th>
+                                        <th>Financial Base (Payable)</th>
+                                        <th>Rejected Qty</th>
+                                        <th>Net Payable</th>
+                                        <th>Calculated Compensation (GHS)</th>
+                                        <th>Payment Status</th>
+                                        <th>Payment Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="compensation-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-top: 20px;">
+                        <div class="panel-header">
+                            <span class="panel-title"><i class="fa-solid fa-chart-bar"></i> Compensation Summary</span>
+                        </div>
+                        <div id="compensation-summary-content" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; font-size:0.95rem; color:#2d3748;">
+                            <div><strong>Total Processed Compensation:</strong> <span id="comp-sum-total">GH₵ 0.00</span></div>
+                            <div><strong>Total Paid Compensation:</strong> <span id="comp-sum-paid" style="color: var(--success);">GH₵ 0.00</span></div>
+                            <div><strong>Total Unpaid Compensation:</strong> <span id="comp-sum-unpaid" style="color: var(--danger);">GH₵ 0.00</span></div>
+                            <div><strong>Number of Paid Statements:</strong> <span id="comp-sum-paid-count">0</span></div>
+                            <div><strong>Number of Unpaid Statements:</strong> <span id="comp-sum-unpaid-count">0</span></div>
                         </div>
                     </div>
                 </div>
@@ -1385,6 +1537,7 @@
         let db_sales = JSON.parse(localStorage.getItem('joaddai_sales')) || [];
         let db_loading = JSON.parse(localStorage.getItem('joaddai_loading')) || [];
         let db_rejections = JSON.parse(localStorage.getItem('joaddai_rejections')) || [];
+        let db_compensation = JSON.parse(localStorage.getItem('joaddai_compensation')) || [];
 
         // Global Variable to reference currently focused transaction entity values
         let currentActiveSaleObject = null;
@@ -1469,134 +1622,162 @@
 
         // --- MODULE A: REAL-TIME ANALYTICS METRICS DASHBOARD AGGREGATORS ---
         function refreshAllDashboardStatistics() {
-            // Get current system date and time dynamically
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const todayStr = `${year}-${month}-${day}`;
-            const currentMonthPrefix = `${year}-${month}`;
-
-            // Update live clock display with formatted current date
             const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-            const formattedDate = now.toLocaleDateString('en-US', dateOptions);
-            document.getElementById('live-clock').innerText = formattedDate;
+            document.getElementById('live-clock').innerText = now.toLocaleDateString('en-US', dateOptions);
 
-            // 1. Total production quantity volume executed today
-            let prodTodayCount = db_production
-                .filter(p => p.date === todayStr)
-                .reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
-            document.getElementById('stat-prod-today').innerText = `${prodTodayCount.toLocaleString()} pcs`;
+            const totalProduction = getTotalPhysicalProductionQuantity();
+            const totalSales = getTotalSalesQuantity();
+            const totalLoadedVolume = getTotalLoadedQuantity();
+            const totalRejectedVolume = getTotalRejectedQuantity();
+            let currentWoodOnGround = totalProduction - totalSales - totalLoadedVolume - totalRejectedVolume;
+            if (currentWoodOnGround < 0) currentWoodOnGround = 0;
 
-            // 2. Cumulative Rejected Lumber Materials recorded volume array count
-            let totalRejectionsCount = db_rejections.reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
-            document.getElementById('stat-reject-total').innerText = `${totalRejectionsCount.toLocaleString()} pcs`;
+            document.getElementById('stat-total-production').innerText = `${totalProduction.toLocaleString()} pcs`;
+            document.getElementById('stat-total-sales').innerText = `${totalSales.toLocaleString()} pcs`;
+            document.getElementById('stat-total-loaded-volume').innerText = `${totalLoadedVolume.toLocaleString()} pcs`;
+            document.getElementById('stat-total-rejected-volume').innerText = `${totalRejectedVolume.toLocaleString()} pcs`;
+            document.getElementById('stat-current-wood-on-ground').innerText = `${currentWoodOnGround.toLocaleString()} pcs`;
 
-            // 3. Count total unique structured multi-batches items generated inside loading registers
-            let activeBatchesCount = 0;
-            db_loading.forEach(loadItem => {
-                if(loadItem.batches && Array.isArray(loadItem.batches)) {
-                    activeBatchesCount += loadItem.batches.length;
-                }
-            });
-            document.getElementById('stat-active-batches').innerText = `${activeBatchesCount} Batches Units`;
-
-            // 4. Net volume quantity of freight loaded out through logistics dispatches manifest system
-            let loadedVolumeCount = 0;
-            db_loading.forEach(loadItem => {
-                if(loadItem.batches && Array.isArray(loadItem.batches)) {
-                    loadItem.batches.forEach(b => {
-                        if(b.items && Array.isArray(b.items)) {
-                            b.items.forEach(itm => {
-                                loadedVolumeCount += parseInt(itm.qty || 0);
-                            });
-                        }
-                    });
-                }
-            });
-            document.getElementById('stat-loaded-volume').innerText = `${loadedVolumeCount.toLocaleString()} pcs`;
-
-            // 5. Total physical items volume produced through this whole current active month timeline
-            let monthlyProductionCount = db_production
-                .filter(p => p.date && p.date.startsWith(currentMonthPrefix))
-                .reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
-
-            // Calculate monthly dispatched volume (logistics/freight leaving inventory)
-            let monthlyDispatchedVolume = 0;
-            db_loading.forEach(loadItem => {
-                if (loadItem.date && loadItem.date.startsWith(currentMonthPrefix) && loadItem.batches && Array.isArray(loadItem.batches)) {
-                    loadItem.batches.forEach(b => {
-                        if(b.items && Array.isArray(b.items)) {
-                            b.items.forEach(itm => {
-                                monthlyDispatchedVolume += parseInt(itm.qty || 0);
-                            });
-                        }
-                    });
-                }
-            });
-
-            // Calculate monthly rejected volume (defective timber removed from inventory)
-            let monthlyRejectedVolume = db_rejections
-                .filter(r => r.date && r.date.startsWith(currentMonthPrefix))
-                .reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
-
-            // Calculate monthly sales volume (sold wood leaving inventory)
-            let monthlySalesVolume = 0;
-            db_sales.forEach(saleItem => {
-                if (saleItem.date && saleItem.date.startsWith(currentMonthPrefix) && saleItem.items && Array.isArray(saleItem.items)) {
-                    saleItem.items.forEach(itm => {
-                        monthlySalesVolume += parseInt(itm.quantity || 0);
-                    });
-                }
-            });
-
-            // Monthly Accumulated Yield = Production − Dispatched − Rejected − Sold
-            let currentMonthAvailableInventory = monthlyProductionCount - monthlyDispatchedVolume - monthlyRejectedVolume - monthlySalesVolume;
-            if (currentMonthAvailableInventory < 0) currentMonthAvailableInventory = 0;
-            document.getElementById('stat-monthly-total').innerText = `${currentMonthAvailableInventory.toLocaleString()} pcs`;
-
-            // 6. Net Yield Efficiency processing formulation calculation output metrics
-            let aggregateHistoricProdCount = db_production.reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
+            const totalRejectionsCount = totalRejectedVolume;
             let efficiencyYieldPercentValue = 100;
-            if (aggregateHistoricProdCount > 0) {
-                efficiencyYieldPercentValue = ((aggregateHistoricProdCount - totalRejectionsCount) / aggregateHistoricProdCount) * 100;
+            if (totalProduction > 0) {
+                efficiencyYieldPercentValue = ((totalProduction - totalRejectionsCount) / totalProduction) * 100;
                 if (efficiencyYieldPercentValue < 0) efficiencyYieldPercentValue = 0;
             }
             document.getElementById('stat-yield-rate').innerText = `${efficiencyYieldPercentValue.toFixed(1)}%`;
         }
 
+        function getTotalPhysicalProductionQuantity() {
+            return db_production.reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
+        }
+
+        function getTotalSalesQuantity() {
+            return db_sales.reduce((sum, sale) => {
+                if (!sale.items || !Array.isArray(sale.items)) return sum;
+                return sum + sale.items.reduce((itemSum, item) => itemSum + parseInt(item.quantity || 0), 0);
+            }, 0);
+        }
+
+        function getTotalLoadedQuantity() {
+            return db_loading.reduce((sum, loadItem) => {
+                if (!loadItem.batches || !Array.isArray(loadItem.batches)) return sum;
+                loadItem.batches.forEach(batch => {
+                    if (!batch.items || !Array.isArray(batch.items)) return;
+                    batch.items.forEach(item => {
+                        sum += parseInt(item.qty || 0);
+                    });
+                });
+                return sum;
+            }, 0);
+        }
+
+        function getTotalRejectedQuantity() {
+            return db_rejections.reduce((sum, item) => sum + parseInt(item.quantity || 0), 0);
+        }
+
+        function calculateAvailableInventoryBySpecies(speciesName) {
+            const normalizedSpecies = speciesName.trim().toLowerCase();
+            const produced = db_production.reduce((sum, item) => {
+                if (item.species.trim().toLowerCase() === normalizedSpecies) {
+                    return sum + parseInt(item.quantity || 0);
+                }
+                return sum;
+            }, 0);
+            const sold = db_sales.reduce((sum, sale) => {
+                if (!sale.items || !Array.isArray(sale.items)) return sum;
+                return sum + sale.items.reduce((itemSum, item) => {
+                    if (item.species.trim().toLowerCase() === normalizedSpecies) {
+                        return itemSum + parseInt(item.quantity || 0);
+                    }
+                    return itemSum;
+                }, 0);
+            }, 0);
+            const loaded = db_loading.reduce((sum, loadItem) => {
+                if (!loadItem.batches || !Array.isArray(loadItem.batches)) return sum;
+                loadItem.batches.forEach(batch => {
+                    if (!batch.items || !Array.isArray(batch.items)) return;
+                    batch.items.forEach(item => {
+                        if (item.species.trim().toLowerCase() === normalizedSpecies) {
+                            sum += parseInt(item.qty || 0);
+                        }
+                    });
+                });
+                return sum;
+            }, 0);
+            const rejected = db_rejections.reduce((sum, item) => {
+                if (item.species.trim().toLowerCase() === normalizedSpecies) {
+                    return sum + parseInt(item.quantity || 0);
+                }
+                return sum;
+            }, 0);
+            return produced - sold - loaded - rejected;
+        }
+
+        function validateInventoryDeductionForSale(saleItems) {
+            const requestedBySpecies = {};
+            saleItems.forEach(item => {
+                const species = item.species.trim().toLowerCase();
+                requestedBySpecies[species] = (requestedBySpecies[species] || 0) + parseInt(item.quantity || 0);
+            });
+            const issues = [];
+            Object.keys(requestedBySpecies).forEach(species => {
+                const available = calculateAvailableInventoryBySpecies(species);
+                if (requestedBySpecies[species] > available) {
+                    issues.push(`${species} has only ${available.toLocaleString()} pcs available but ${requestedBySpecies[species].toLocaleString()} pcs requested.`);
+                }
+            });
+            return { valid: issues.length === 0, issues };
+        }
+
+        function validateInventoryDeductionForLoading(loadItems) {
+            const requestedBySpecies = {};
+            loadItems.forEach(item => {
+                const species = item.species.trim().toLowerCase();
+                requestedBySpecies[species] = (requestedBySpecies[species] || 0) + parseInt(item.qty || 0);
+            });
+            const issues = [];
+            Object.keys(requestedBySpecies).forEach(species => {
+                const available = calculateAvailableInventoryBySpecies(species);
+                if (requestedBySpecies[species] > available) {
+                    issues.push(`${species} has only ${available.toLocaleString()} pcs available but ${requestedBySpecies[species].toLocaleString()} pcs requested for dispatch.`);
+                }
+            });
+            return { valid: issues.length === 0, issues };
+        }
+
+        function validateInventoryDeductionForRejection(speciesName, qty) {
+            const available = calculateAvailableInventoryBySpecies(speciesName);
+            if (qty > available) {
+                return { valid: false, issue: `${speciesName} has only ${available.toLocaleString()} pcs available but rejection qty is ${qty.toLocaleString()} pcs.` };
+            }
+            return { valid: true };
+        }
+
         // --- DASHBOARD REPORT DATA EXPORT DRIVERS ---
         function exportDashboard(formatType) {
+            const reportRows = [
+                ["Total Production (Physical Output)", document.getElementById('stat-total-production').innerText],
+                ["Total Sales Quantity", document.getElementById('stat-total-sales').innerText],
+                ["Total Loaded Volume", document.getElementById('stat-total-loaded-volume').innerText],
+                ["Total Rejected Volume", document.getElementById('stat-total-rejected-volume').innerText],
+                ["Current Wood on Ground (Available Inventory)", document.getElementById('stat-current-wood-on-ground').innerText],
+                ["Net Material Industrial Processing Recovery Efficiency Yield Rate", document.getElementById('stat-yield-rate').innerText]
+            ];
+            const filename = createExportFilename('Dashboard_Summary', { tag: 'Dashboard' });
+
             if (formatType === 'excel') {
-                let csvRowsContentData = [];
+                const csvRowsContentData = [];
                 csvRowsContentData.push(["JOADDAI CO. LTD - ENTERPRISE OPERATIONS EXECUTIVE REPORT SUMMARY"]);
-                
-                // Get current system timestamp
-                const now = new Date();
-                const timestamp = now.toLocaleString('en-GB', { 
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false,
-                    timeZone: 'UTC'
-                }) + ' GMT';
-                csvRowsContentData.push(["Report Extraction Time Frame Stamp:", timestamp]);
+                csvRowsContentData.push(["Report Extraction Time Frame Stamp:", new Date().toLocaleString('en-GB', {
+                    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'UTC'
+                }) + ' GMT']);
                 csvRowsContentData.push([]);
-                csvRowsContentData.push(["Operational KPIs Key Performance Parameter Metrics Indicator Name", "Aggregated Numerical Value Stat Record"]);
-                csvRowsContentData.push(["Total Physical Volume Produced (Today Scope)", document.getElementById('stat-prod-today').innerText]);
-                csvRowsContentData.push(["Accumulated Material Rejections Waste Metric", document.getElementById('stat-reject-total').innerText]);
-                csvRowsContentData.push(["Active Industrial Cargo Dispatches Processing Batches", document.getElementById('stat-active-batches').innerText]);
-                csvRowsContentData.push(["Total Freight Loaded Out System Handled Volume", document.getElementById('stat-loaded-volume').innerText]);
-                csvRowsContentData.push(["Current Running Month Consolidated Production Gross", document.getElementById('stat-monthly-total').innerText]);
-                csvRowsContentData.push(["Net Material Industrial Processing Recovery Efficiency Yield Rate", document.getElementById('stat-yield-rate').innerText]);
-                
-                triggerDirectCSVDownloadStreamFile(csvRowsContentData, "JOADDAI_Core_Executive_Dashboard_KPI_Report.csv");
+                csvRowsContentData.push(["Metric", "Value"]);
+                reportRows.forEach(row => csvRowsContentData.push(row));
+                triggerDirectCSVDownloadStreamFile(csvRowsContentData, filename);
             } else {
-                alert("Initializing Virtual Document PDF Printer Interface Framework Driver Component.");
-                window.print();
+                printExportReport('Dashboard Summary Report', ['Metric', 'Value'], reportRows);
             }
         }
 
@@ -1683,9 +1864,17 @@
             const opFilterInputStr = document.getElementById('filter-prod-operator').value.toLowerCase().trim();
             const dateFilterInputStr = document.getElementById('filter-prod-date').value;
 
+            let totalPhysicalOutput = 0;
+            let totalPayable = 0;
+
             db_production.forEach((item, index) => {
                 if (opFilterInputStr && !item.operator.toLowerCase().includes(opFilterInputStr)) return;
                 if (dateFilterInputStr && item.date !== dateFilterInputStr) return;
+
+                const quantityValue = Number(item.quantity) || 0;
+                const payableValue = Number(item.payable) || 0;
+                totalPhysicalOutput += quantityValue;
+                totalPayable += payableValue;
 
                 const rowNodeHtml = document.createElement('tr');
                 rowNodeHtml.innerHTML = `
@@ -1693,8 +1882,8 @@
                     <td><strong>${item.operator}</strong></td>
                     <td>${item.species}</td>
                     <td><span class="date-badge">${item.size}</span></td>
-                    <td>${parseInt(item.quantity).toLocaleString()} pcs</td>
-                    <td><span style="color:var(--accent); font-weight:700;">${parseInt(item.payable).toLocaleString()} Units</span></td>
+                    <td>${quantityValue.toLocaleString()} pcs</td>
+                    <td><span style="color:var(--accent); font-weight:700;">${payableValue.toLocaleString()} Units</span></td>
                     <td class="actions-cell">
                         <button class="btn-icon btn-icon-edit" onclick="triggerEditProductionMode(${index})" title="Edit entry parameters"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button class="btn-icon btn-icon-delete" onclick="triggerDeleteProductionItem(${index})" title="Purge line element"><i class="fa-solid fa-trash-can"></i></button>
@@ -1702,6 +1891,107 @@
                 `;
                 tableBodyElement.appendChild(rowNodeHtml);
             });
+
+            updateProductionSummary(totalPhysicalOutput, totalPayable);
+        }
+
+        function updateProductionSummary(totalPhysicalOutput, totalPayable) {
+            const summaryContent = document.getElementById('production-summary-content');
+            if (!summaryContent) return;
+
+            summaryContent.innerHTML = `
+                <div><strong>Total Physical Output (Qty):</strong> ${totalPhysicalOutput.toLocaleString()} pcs</div>
+                <div><strong>Total Financial Base (Payable):</strong> ${totalPayable.toLocaleString()} Units</div>
+            `;
+        }
+
+        function getFilteredProductionRecords() {
+            const opFilterInputStr = document.getElementById('filter-prod-operator').value.toLowerCase().trim();
+            const dateFilterInputStr = document.getElementById('filter-prod-date').value;
+            return db_production.filter(item => {
+                if (opFilterInputStr && !item.operator.toLowerCase().includes(opFilterInputStr)) return false;
+                if (dateFilterInputStr && item.date !== dateFilterInputStr) return false;
+                return true;
+            });
+        }
+
+        function getFilteredSalesRecords() {
+            const startDateScope = document.getElementById('filter-sales-start').value;
+            const endDateScope = document.getElementById('filter-sales-end').value;
+            return db_sales.filter(saleItem => {
+                if (startDateScope && saleItem.date < startDateScope) return false;
+                if (endDateScope && saleItem.date > endDateScope) return false;
+                return true;
+            });
+        }
+
+        function getFilteredLoadingRecords() {
+            return db_loading.slice();
+        }
+
+        function getFilteredRejectionsRecords() {
+            return db_rejections.slice();
+        }
+
+        function normalizeExportText(value) {
+            if (value === null || value === undefined) return '';
+            return value.toString();
+        }
+
+        function createExportFilename(prefix, options = {}) {
+            const parts = [prefix];
+            if (options.operator) parts.push(`Operator_${options.operator.replace(/\s+/g, '_')}`);
+            if (options.startDate && options.endDate) {
+                parts.push(`${options.startDate}_to_${options.endDate}`);
+            } else if (options.date) {
+                parts.push(options.date);
+            }
+            if (options.tag) parts.push(options.tag);
+            parts.push(new Date().toISOString().slice(0, 10));
+            return parts.join('_').replace(/__+/g, '_').replace(/[^a-zA-Z0-9_.-]/g, '') + '.csv';
+        }
+
+        function printExportReport(reportTitle, headers, rows, summaryRows = []) {
+            let html = `<div style="font-family: Arial, sans-serif; color: #2c3e50; line-height:1.4;">
+                <h1 style="font-size:1.4rem; margin-bottom:0.5rem;">${reportTitle}</h1>
+                <p style="margin-bottom:1rem;">Export created on ${new Date().toLocaleString()}</p>
+                <table style="width:100%; border-collapse: collapse; margin-bottom: 1rem;">
+                    <thead><tr>`;
+            headers.forEach(header => {
+                html += `<th style="border:1px solid #ccc; padding:8px; background:#f7f7f7; text-align:left;">${normalizeExportText(header)}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+            rows.forEach(row => {
+                html += '<tr>';
+                row.forEach(cell => {
+                    html += `<td style="border:1px solid #ccc; padding:8px;">${normalizeExportText(cell)}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            if (summaryRows.length) {
+                html += '<tfoot>';
+                summaryRows.forEach(row => {
+                    html += '<tr>';
+                    row.forEach(cell => {
+                        html += `<td style="border:1px solid #ccc; padding:8px; font-weight:700; background:#f9fafb;">${normalizeExportText(cell)}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tfoot>';
+            }
+            html += '</table></div>';
+
+            const container = document.createElement('div');
+            container.id = 'print-export-container';
+            container.innerHTML = html;
+            document.body.appendChild(container);
+            window.print();
+            setTimeout(() => {
+                if (container.parentElement) {
+                    container.parentElement.removeChild(container);
+                }
+            }, 500);
         }
 
         function triggerEditProductionMode(targetIndex) {
@@ -1735,17 +2025,29 @@
         }
 
         function exportProduction(formatType) {
+            const filteredRecords = getFilteredProductionRecords();
+            const totalPhysicalOutput = filteredRecords.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+            const totalPayable = filteredRecords.reduce((sum, item) => sum + Number(item.payable || 0), 0);
+            const operatorFilter = document.getElementById('filter-prod-operator').value.trim();
+            const dateFilter = document.getElementById('filter-prod-date').value;
+            const filename = createExportFilename('Production_Report', { operator: operatorFilter || undefined, date: dateFilter || undefined, tag: filteredRecords.length ? 'Filtered' : undefined });
+
+            const headers = ["Log Date Stamp", "Operator Name", "Timber Species", "Dimensions Spec", "Physical Output (Pcs)", "Financial Base (Payable)"];
+            const rows = filteredRecords.map(i => [i.date, i.operator, i.species, i.size, i.quantity, i.payable]);
+            const summaryRows = [["Total Physical Output (Qty)", totalPhysicalOutput.toLocaleString() + ' pcs', "Total Financial Base (Payable)", totalPayable.toLocaleString() + ' Units', '', '']];
+
             if (formatType === 'excel') {
-                let csvRowsContentData = [];
+                const csvRowsContentData = [];
                 csvRowsContentData.push(["JOADDAI CO. LTD - PRODUCTION TRACKING HISTORY REGISTER LOG REPORT"]);
-                csvRowsContentData.push(["Log Date Stamp", "Operator Name Matching Reference", "Timber Botanical Wood Species", "Dimensions Spec Group Profile Type", "Physical Total Quantities Output (Pcs)", "Financial Payables Baseline Factor Metric Units"]);
-                
-                db_production.forEach(i => {
-                    csvRowsContentData.push([i.date, i.operator, i.species, i.size, i.quantity, i.payable]);
-                });
-                triggerDirectCSVDownloadStreamFile(csvRowsContentData, "JOADDAI_Operational_Production_Registry_Ledger.csv");
+                csvRowsContentData.push(["Exported Records", rows.length]);
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(headers);
+                rows.forEach(row => csvRowsContentData.push(row));
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(summaryRows[0]);
+                triggerDirectCSVDownloadStreamFile(csvRowsContentData, filename);
             } else {
-                window.print();
+                printExportReport('Filtered Production Report', headers, rows, summaryRows);
             }
         }
 
@@ -1790,6 +2092,58 @@
 
             let netAuditedFinalSalaryPayoutVal = finalNetPayableQuantity * financeMultiplierRateFactor;
 
+            // Extract operator real name (not lowercase)
+            let operatorRealName = "";
+            if (filteredProductionRecords.length > 0) {
+                operatorRealName = filteredProductionRecords[0].operator;
+            }
+
+            // Extract processing period from date range
+            let processingPeriod = "";
+            if (startRangeDateValue && endRangeDateValue) {
+                const startDate = new Date(startRangeDateValue);
+                const endDate = new Date(endRangeDateValue);
+                processingPeriod = startDate.toLocaleString('en-US', { month: 'short', year: 'numeric' }) + " - " + endDate.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            }
+
+            // Save compensation statement to database
+            const compensationRecord = {
+                operator: operatorRealName,
+                startDate: startRangeDateValue,
+                endDate: endRangeDateValue,
+                processingPeriod: processingPeriod,
+                physicalOutput: totalPhysicalQuantitySum,
+                financialBase: totalPayableBaselineSum,
+                rejectedQty: totalRejectedQuantitySum,
+                netPayable: finalNetPayableQuantity,
+                compensation: netAuditedFinalSalaryPayoutVal,
+                paymentStatus: "unpaid",
+                paymentDate: null,
+                ratePerUnit: financeMultiplierRateFactor,
+                createdDate: new Date().toISOString()
+            };
+
+            // Check if this compensation record already exists (same operator and period)
+            const existingIndex = db_compensation.findIndex(c => 
+                c.operator === operatorRealName && 
+                c.startDate === startRangeDateValue && 
+                c.endDate === endRangeDateValue
+            );
+
+            if (existingIndex >= 0) {
+                // Update existing record, preserve payment status
+                const existing = db_compensation[existingIndex];
+                compensationRecord.paymentStatus = existing.paymentStatus;
+                compensationRecord.paymentDate = existing.paymentDate;
+                db_compensation[existingIndex] = compensationRecord;
+            } else {
+                // Add new record
+                db_compensation.push(compensationRecord);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('joaddai_compensation', JSON.stringify(db_compensation));
+
             // Output generated values into the analytics cards grid display
             document.getElementById('sal-stat-qty').innerText = totalPhysicalQuantitySum.toLocaleString();
             document.getElementById('sal-stat-rejections').innerText = totalRejectedQuantitySum.toLocaleString();
@@ -1797,10 +2151,166 @@
             document.getElementById('sal-stat-net-pay').innerText = `GH₵ ${netAuditedFinalSalaryPayoutVal.toFixed(2)}`;
 
             document.getElementById('salary-result-panel').style.display = 'block';
+            renderCompensationTable();
+        }
+
+        function renderCompensationTable() {
+            const tableBodyElement = document.getElementById('compensation-table-body');
+            tableBodyElement.innerHTML = "";
+
+            const operatorFilter = document.getElementById('comp-filter-operator').value.toLowerCase().trim();
+            const monthFilter = document.getElementById('comp-filter-month').value;
+            const yearFilter = document.getElementById('comp-filter-year').value;
+            const statusFilter = document.getElementById('comp-filter-status').value;
+
+            let filteredRecords = db_compensation.filter(record => {
+                if (operatorFilter && !record.operator.toLowerCase().includes(operatorFilter)) return false;
+                if (statusFilter && record.paymentStatus !== statusFilter) return false;
+                if (monthFilter || yearFilter) {
+                    const startDate = new Date(record.startDate);
+                    if (monthFilter && (startDate.getMonth() + 1).toString().padStart(2, '0') !== monthFilter) return false;
+                    if (yearFilter && startDate.getFullYear().toString() !== yearFilter) return false;
+                }
+                return true;
+            });
+
+            let totalCompensation = 0;
+            let totalPaid = 0;
+            let totalUnpaid = 0;
+            let paidCount = 0;
+            let unpaidCount = 0;
+
+            filteredRecords.forEach((record, index) => {
+                const paymentStatus = record.paymentStatus || 'unpaid';
+                const badgeClass = paymentStatus === 'paid' ? 'status-paid' : 'status-unpaid';
+                const badgeText = paymentStatus.toUpperCase();
+                const paymentDateText = record.paymentDate ? new Date(record.paymentDate).toLocaleDateString() : 'N/A';
+
+                const trElement = document.createElement('tr');
+                trElement.innerHTML = `
+                    <td><strong>${record.operator}</strong></td>
+                    <td>${record.processingPeriod}</td>
+                    <td>${record.physicalOutput.toLocaleString()} pcs</td>
+                    <td>${record.financialBase.toLocaleString()} Units</td>
+                    <td>${record.rejectedQty.toLocaleString()} pcs</td>
+                    <td>${record.netPayable.toLocaleString()}</td>
+                    <td style="color: var(--success); font-weight: 700;">GH₵ ${record.compensation.toFixed(2)}</td>
+                    <td><span class="status-badge ${badgeClass}">${badgeText}</span></td>
+                    <td>${paymentDateText}</td>
+                    <td class="actions-cell">
+                        <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;" onclick="toggleCompensationPaymentStatus(${db_compensation.indexOf(record)})" title="Toggle payment status">
+                            ${paymentStatus === 'paid' ? '<i class="fa-solid fa-rotate-left"></i> Mark Unpaid' : '<i class="fa-solid fa-circle-check"></i> Mark Paid'}
+                        </button>
+                    </td>
+                `;
+                tableBodyElement.appendChild(trElement);
+
+                totalCompensation += record.compensation;
+                if (paymentStatus === 'paid') {
+                    totalPaid += record.compensation;
+                    paidCount++;
+                } else {
+                    totalUnpaid += record.compensation;
+                    unpaidCount++;
+                }
+            });
+
+            // Update summary
+            document.getElementById('comp-sum-total').innerText = `GH₵ ${totalCompensation.toFixed(2)}`;
+            document.getElementById('comp-sum-paid').innerText = `GH₵ ${totalPaid.toFixed(2)}`;
+            document.getElementById('comp-sum-unpaid').innerText = `GH₵ ${totalUnpaid.toFixed(2)}`;
+            document.getElementById('comp-sum-paid-count').innerText = paidCount;
+            document.getElementById('comp-sum-unpaid-count').innerText = unpaidCount;
+        }
+
+        function toggleCompensationPaymentStatus(index) {
+            const record = db_compensation[index];
+            const newStatus = record.paymentStatus === 'paid' ? 'unpaid' : 'paid';
+            record.paymentStatus = newStatus;
+            
+            if (newStatus === 'paid') {
+                record.paymentDate = new Date().toISOString();
+            } else {
+                record.paymentDate = null;
+            }
+
+            localStorage.setItem('joaddai_compensation', JSON.stringify(db_compensation));
+            renderCompensationTable();
         }
 
         function exportSalary(formatType) {
-            window.print();
+            const operatorFilter = document.getElementById('comp-filter-operator').value.toLowerCase().trim();
+            const monthFilter = document.getElementById('comp-filter-month').value;
+            const yearFilter = document.getElementById('comp-filter-year').value;
+            const statusFilter = document.getElementById('comp-filter-status').value;
+
+            let filteredRecords = db_compensation.filter(record => {
+                if (operatorFilter && !record.operator.toLowerCase().includes(operatorFilter)) return false;
+                if (statusFilter && record.paymentStatus !== statusFilter) return false;
+                if (monthFilter || yearFilter) {
+                    const startDate = new Date(record.startDate);
+                    if (monthFilter && (startDate.getMonth() + 1).toString().padStart(2, '0') !== monthFilter) return false;
+                    if (yearFilter && startDate.getFullYear().toString() !== yearFilter) return false;
+                }
+                return true;
+            });
+
+            let totalCompensation = 0;
+            let totalPaid = 0;
+            let totalUnpaid = 0;
+            let paidCount = 0;
+            let unpaidCount = 0;
+
+            filteredRecords.forEach(record => {
+                const paymentStatus = record.paymentStatus || 'unpaid';
+                totalCompensation += record.compensation;
+                if (paymentStatus === 'paid') {
+                    totalPaid += record.compensation;
+                    paidCount++;
+                } else {
+                    totalUnpaid += record.compensation;
+                    unpaidCount++;
+                }
+            });
+
+            const filename = createExportFilename('Compensation_Report', {
+                operator: operatorFilter || undefined,
+                tag: filteredRecords.length ? 'Filtered' : undefined
+            });
+
+            const headers = ["Operator Name", "Processing Period", "Physical Output (Pcs)", "Financial Base (Payable)", "Rejected Qty", "Net Payable", "Calculated Compensation (GHS)", "Payment Status", "Payment Date"];
+            const rows = filteredRecords.map(r => [
+                r.operator,
+                r.processingPeriod,
+                r.physicalOutput,
+                r.financialBase,
+                r.rejectedQty,
+                r.netPayable,
+                r.compensation.toFixed(2),
+                (r.paymentStatus || 'unpaid').toUpperCase(),
+                r.paymentDate ? new Date(r.paymentDate).toLocaleDateString() : 'N/A'
+            ]);
+            const summaryRows = [
+                ["Total Processed Compensation", "", "", "", "", "", `GH₵ ${totalCompensation.toFixed(2)}`, "", ""],
+                ["Total Paid Compensation", "", "", "", "", "", `GH₵ ${totalPaid.toFixed(2)}`, "", ""],
+                ["Total Unpaid Compensation", "", "", "", "", "", `GH₵ ${totalUnpaid.toFixed(2)}`, "", ""],
+                ["Number of Paid Statements", "", "", "", "", "", paidCount, "", ""],
+                ["Number of Unpaid Statements", "", "", "", "", "", unpaidCount, "", ""]
+            ];
+
+            if (formatType === 'excel') {
+                const csvRowsContentData = [];
+                csvRowsContentData.push(["JOADDAI CO. LTD - OPERATOR COMPENSATION STATEMENTS REPORT"]);
+                csvRowsContentData.push(["Exported Records", filteredRecords.length]);
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(headers);
+                rows.forEach(row => csvRowsContentData.push(row));
+                csvRowsContentData.push([]);
+                summaryRows.forEach(row => csvRowsContentData.push(row));
+                triggerDirectCSVDownloadStreamFile(csvRowsContentData, filename);
+            } else {
+                printExportReport('Compensation Statements Report', headers, rows, summaryRows);
+            }
         }
 
         // --- MODULE C: MULTI-SPECIES COMMERCIAL SALES MANAGEMENT & PAYMENT MATRIX ---
@@ -1853,23 +2363,13 @@
                     price: linePrice,
                     total: lineTotalCost
                 });
-
-                // Automated Inventory Deduction Mechanics Loop Module for each entry element item
-                let remainingDeficitToDeduct = lineQty;
-                for (let i = 0; i < db_production.length; i++) {
-                    if (db_production[i].species.toLowerCase() === lineSpecies.toLowerCase()) {
-                        let currentAvailableRowStockVolume = parseInt(db_production[i].quantity || 0);
-                        if (currentAvailableRowStockVolume >= remainingDeficitToDeduct) {
-                            db_production[i].quantity = currentAvailableRowStockVolume - remainingDeficitToDeduct;
-                            remainingDeficitToDeduct = 0;
-                            break;
-                        } else {
-                            remainingDeficitToDeduct -= currentAvailableRowStockVolume;
-                            db_production[i].quantity = 0;
-                        }
-                    }
-                }
             });
+
+            const validationResult = validateInventoryDeductionForSale(salesBasketLineItemsGroup);
+            if (!validationResult.valid) {
+                alert("Inventory Validation Error:\n" + validationResult.issues.join('\n'));
+                return;
+            }
 
             const salesTransactionPayloadObject = {
                 date: dateInputVal,
@@ -1882,7 +2382,6 @@
             };
 
             db_sales.push(salesTransactionPayloadObject);
-            localStorage.setItem('joaddai_production', JSON.stringify(db_production));
             saveToStorage('joaddai_sales', db_sales);
 
             document.getElementById('sales-form').reset();
@@ -1892,7 +2391,7 @@
             addSalesRow(); // Put back a single clean initial item row form box display segment
             
             renderSalesTable();
-            alert("Commercial multi-item sales processing sequence completed successfully. Internal stock quantities adjusted dynamically.");
+            alert("Commercial multi-item sales processing sequence completed successfully. Inventory metrics have been updated from transaction history.");
         }
 
         function toggleInvoicePaymentStatusInTable(targetIndex) {
@@ -1926,7 +2425,7 @@
                 tableRowHtmlNode.innerHTML = `
                     <td>${saleItem.date}</td>
                     <td><strong>${saleItem.customer}</strong></td>
-                    <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${itemsPreviewSummaryText}">${itemsPreviewSummaryText}</td>
+                    <td style="max-width:200px; overflow-wrap:anywhere; word-break:break-word; white-space:normal;" title="${itemsPreviewSummaryText}">${itemsPreviewSummaryText}</td>
                     <td>${saleItem.totalPiecesCount.toLocaleString()} pcs</td>
                     <td><span style="color:var(--success); font-weight:700;">GH₵ ${parseFloat(saleItem.totalBillAmount).toFixed(2)}</span></td>
                     <td>
@@ -2018,17 +2517,41 @@
         }
 
         function exportSales(formatType) {
+            const filteredRecords = getFilteredSalesRecords();
+            const totalPieces = filteredRecords.reduce((sum, sale) => sum + Number(sale.totalPiecesCount || 0), 0);
+            const totalBill = filteredRecords.reduce((sum, sale) => sum + Number(sale.totalBillAmount || 0), 0);
+            const startDateScope = document.getElementById('filter-sales-start').value;
+            const endDateScope = document.getElementById('filter-sales-end').value;
+            const filename = createExportFilename('Sales_Report', {
+                startDate: startDateScope || undefined,
+                endDate: endDateScope || undefined,
+                tag: filteredRecords.length ? 'Filtered' : undefined
+            });
+
+            const headers = ["Date", "Client Name", "Items Summary", "Total Pieces", "Total Bill (GHS)", "Payment Status", "Notes"];
+            const rows = filteredRecords.map(s => [
+                s.date,
+                s.customer,
+                s.items.map(i => `${i.species}:${i.quantity}`).join(' | '),
+                s.totalPiecesCount,
+                Number(s.totalBillAmount).toFixed(2),
+                s.paymentStatus,
+                s.notes
+            ]);
+            const summaryRows = [["Total Records", filteredRecords.length, "Total Pieces", totalPieces.toLocaleString(), "Total Bill", `GH₵ ${totalBill.toFixed(2)}`]];
+
             if (formatType === 'excel') {
-                let csvRowsContentData = [];
+                const csvRowsContentData = [];
                 csvRowsContentData.push(["JOADDAI CO. LTD - COMMERCIAL ACCOUNTS INVOICING & REVENUE REGISTER"]);
-                csvRowsContentData.push(["Calendar Invoice Date", "Purchasing Client Identity", "Basket Breakdown Summary Details", "Total Combined Volume pieces Count", "Net Invoice Total Bill Valuation (GHS)", "Current Settlement Status", "Internal Audit Accountable Remarks"]);
-                db_sales.forEach(s => {
-                    let basketSummary = s.items.map(i => `${i.species}:${i.quantity}`).join(' | ');
-                    csvRowsContentData.push([s.date, s.customer, basketSummary, s.totalPiecesCount, s.totalBillAmount, s.paymentStatus, s.notes]);
-                });
-                triggerDirectCSVDownloadStreamFile(csvRowsContentData, "JOADDAI_Commercial_Corporate_Sales_Ledger.csv");
+                csvRowsContentData.push(["Exported Records", filteredRecords.length]);
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(headers);
+                rows.forEach(row => csvRowsContentData.push(row));
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(summaryRows[0]);
+                triggerDirectCSVDownloadStreamFile(csvRowsContentData, filename);
             } else {
-                window.print();
+                printExportReport('Filtered Sales Report', headers, rows, summaryRows);
             }
         }
 
@@ -2151,12 +2674,18 @@
                     });
                 });
 
-                processedStructuredBatchesPayloadArray.push({
+                    processedStructuredBatchesPayloadArray.push({
                     batchNameIndexTitle: getOrdinalLabel(loopIndexOffset + 1),
                     batchTotalPiecesCount: currentBatchSegmentTotalUnitsSum,
                     items: currentBatchContainedItemsArrayList
                 });
             });
+
+            const validationResult = validateInventoryDeductionForLoading(processedStructuredBatchesPayloadArray.flatMap(batch => batch.items));
+            if (!validationResult.valid) {
+                alert("Inventory Validation Error:\n" + validationResult.issues.join('\n'));
+                return;
+            }
 
             const comprehensiveLogisticsDispatchPayloadObject = {
                 date: manifestDateInputVal,
@@ -2267,16 +2796,26 @@
         }
 
         function exportLoading(formatType) {
+            const filteredRecords = getFilteredLoadingRecords();
+            const totalLoadedVolume = filteredRecords.reduce((sum, load) => sum + Number(load.overallTotalVolumeLoaded || 0), 0);
+            const filename = createExportFilename('Loading_Report', { tag: filteredRecords.length ? 'Filtered' : undefined });
+
+            const headers = ["Manifest Date", "Client Name", "Vehicle", "Total Loaded Volume (Pcs)"];
+            const rows = filteredRecords.map(l => [l.date, l.customer, l.vehicle, l.overallTotalVolumeLoaded]);
+            const summaryRows = [["Total Records", filteredRecords.length, "Total Loaded", totalLoadedVolume.toLocaleString() + ' pcs']];
+
             if (formatType === 'excel') {
-                let csvRowsContentData = [];
+                const csvRowsContentData = [];
                 csvRowsContentData.push(["JOADDAI CO. LTD - LOGISTICS FREIGHT DISPATCH & MULTI-BATCH WAYBILL HISTORIC REGISTERS"]);
-                csvRowsContentData.push(["Manifest Logging Date", "Consignee Client Targeted Destination", "Vehicle Registration Plate Code", "Total Shipped Individual Timber Units pieces Load Count"]);
-                db_loading.forEach(l => {
-                    csvRowsContentData.push([l.date, l.customer, l.vehicle, l.overallTotalVolumeLoaded]);
-                });
-                triggerDirectCSVDownloadStreamFile(csvRowsContentData, "JOADDAI_Consignment_Freight_Dispatches_Ledger.csv");
+                csvRowsContentData.push(["Exported Records", filteredRecords.length]);
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(headers);
+                rows.forEach(row => csvRowsContentData.push(row));
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(summaryRows[0]);
+                triggerDirectCSVDownloadStreamFile(csvRowsContentData, filename);
             } else {
-                window.print();
+                printExportReport('Loading Dispatch Report', headers, rows, summaryRows);
             }
         }
 
@@ -2289,6 +2828,12 @@
             const sizeVal = document.getElementById('reject-size').value.trim();
             const qtyVal = parseInt(document.getElementById('reject-qty').value);
             const remarksVal = document.getElementById('reject-remarks').value.trim();
+
+            const validationResult = validateInventoryDeductionForRejection(speciesVal, qtyVal);
+            if (!validationResult.valid) {
+                alert("Inventory Validation Error:\n" + validationResult.issue);
+                return;
+            }
 
             const rejectionDataLogPayloadObject = {
                 date: dateVal,
@@ -2338,16 +2883,26 @@
         }
 
         function exportRejections(formatType) {
+            const filteredRecords = getFilteredRejectionsRecords();
+            const totalRejectedVolume = filteredRecords.reduce((sum, r) => sum + Number(r.quantity || 0), 0);
+            const filename = createExportFilename('Rejections_Report', { tag: filteredRecords.length ? 'Filtered' : undefined });
+
+            const headers = ["Inspection Date", "Operator", "Species", "Size", "Rejected Qty", "Remarks"];
+            const rows = filteredRecords.map(r => [r.date, r.operator, r.species, r.size, r.quantity, r.remarks]);
+            const summaryRows = [["Total Records", filteredRecords.length, "Total Rejected", totalRejectedVolume.toLocaleString() + ' pcs', "", ""]];
+
             if (formatType === 'excel') {
-                let csvRowsContentData = [];
+                const csvRowsContentData = [];
                 csvRowsContentData.push(["JOADDAI CO. LTD - QUALITY CONTROL DEFECT REJECTIONS HISTORY REGISTER LOG DATA REPORT"]);
-                csvRowsContentData.push(["Inspection Logged Date", "Accountable Mill Operator", "Timber Species Code", "Dimensions Sizing Spec Profiles", "Volume Quantities Dropped Defective Pcs Count", "Technical Evaluation Deficiency Observations Notes"]);
-                db_rejections.forEach(r => {
-                    csvRowsContentData.push([r.date, r.operator, r.species, r.size, r.quantity, r.remarks]);
-                });
-                triggerDirectCSVDownloadStreamFile(csvRowsContentData, "JOADDAI_Quality_Control_Material_Rejections_Registry.csv");
+                csvRowsContentData.push(["Exported Records", filteredRecords.length]);
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(headers);
+                rows.forEach(row => csvRowsContentData.push(row));
+                csvRowsContentData.push([]);
+                csvRowsContentData.push(summaryRows[0]);
+                triggerDirectCSVDownloadStreamFile(csvRowsContentData, filename);
             } else {
-                window.print();
+                printExportReport('Rejections Report', headers, rows, summaryRows);
             }
         }
 
